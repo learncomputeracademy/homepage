@@ -21,7 +21,12 @@
         </div>
         <div class="time-info">
             <span class="time-display"></span>
-            <span class="time-icon"></span>
+            <svg class="time-icon" width="24" height="24" viewBox="0 0 24 24">
+                <circle cx="12" cy="12" r="10" fill="none" stroke="var(--text-color)" stroke-width="2"/>
+                <line id="hourHand" x1="12" y1="12" x2="12" y2="6" stroke="var(--text-color)" stroke-width="2" stroke-linecap="round"/>
+                <line id="minuteHand" x1="12" y1="12" x2="12" y2="4" stroke="var(--text-color)" stroke-width="1.5" stroke-linecap="round"/>
+                <line id="secondHand" x1="12" y1="12" x2="12" y2="3" stroke="var(--primary-color)" stroke-width="1" stroke-linecap="round"/>
+            </svg>
         </div>
     </div>
     <!-- Header Start -->
@@ -303,33 +308,69 @@
         updateTabsVisibility("google");
 
 
-        // Weather API Fetch
-            const apiKey = '01e23240f8875c55945a9a43542cab00'; // Replace with your API key
+        // Weather
             const weatherTemp = document.querySelector('.weather-temp');
             const weatherIcon = document.querySelector('.weather-icon');
 
-            fetch(`https://api.openweathermap.org/data/2.5/weather?lat=22.8420&lon=88.6560&units=metric&appid=${apiKey}`)
-                .then(response => response.json())
+            fetch('https://api.open-meteo.com/v1/forecast?latitude=22.8420&longitude=88.6560&current=temperature_2m,weather_code&timezone=Asia/Kolkata')
+                .then(response => {
+                    if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+                    return response.json();
+                })
                 .then(data => {
-                    const temp = Math.round(data.main.temp);
-                    const iconCode = data.weather[0].icon;
+                    const temp = Math.round(data.current.temperature_2m);
+                    const weatherCode = data.current.weather_code;
                     weatherTemp.textContent = `${temp}°C`;
-                    weatherIcon.style.backgroundImage = `url(http://openweathermap.org/img/wn/${iconCode}.png)`;
+
+                    // Map Open-Meteo WMO weather codes to icons (simplified)
+                    const iconMap = {
+                        0: '01d', // Clear sky
+                        1: '02d', // Mainly clear
+                        2: '03d', // Partly cloudy
+                        3: '04d', // Overcast
+                        61: '10d', // Rain
+                        80: '09d'  // Showers
+                        // Add more mappings as needed
+                    };
+                    const iconCode = iconMap[weatherCode] || '01d'; // Default to clear
+                    weatherIcon.style.backgroundImage = `url(http://openweathermap.org/img/wn/${iconCode}.png)`; // Reuse OpenWeatherMap icons
                 })
                 .catch(error => {
                     console.error('Error fetching weather:', error);
                     weatherTemp.textContent = 'Weather N/A';
                 });
 
-            // Time Display
+            // Time Display and Clock Hands
             const timeDisplay = document.querySelector('.time-display');
+            const hourHand = document.getElementById('hourHand');
+            const minuteHand = document.getElementById('minuteHand');
+            const secondHand = document.getElementById('secondHand');
+
             function updateTime() {
                 const now = new Date();
+                
+                // Update numeric time display
                 const options = { hour: 'numeric', minute: '2-digit', hour12: true };
                 timeDisplay.textContent = now.toLocaleTimeString('en-US', options);
+                
+                // Calculate angles for clock hands
+                const hours = now.getHours() % 12; // Convert to 12-hour format
+                const minutes = now.getMinutes();
+                const seconds = now.getSeconds();
+                
+                const hourDeg = (hours * 30) + (minutes * 0.5); // 30° per hour + 0.5° per minute
+                const minuteDeg = minutes * 6; // 6° per minute
+                const secondDeg = seconds * 6; // 6° per second
+                
+                // Rotate clock hands
+                hourHand.setAttribute('transform', `rotate(${hourDeg}, 12, 12)`);
+                minuteHand.setAttribute('transform', `rotate(${minuteDeg}, 12, 12)`);
+                secondHand.setAttribute('transform', `rotate(${secondDeg}, 12, 12)`);
             }
+
+            // Initial call and update every second
             updateTime();
-            setInterval(updateTime, 1000); // Update every second
+            setInterval(updateTime, 1000);
         });
 
 

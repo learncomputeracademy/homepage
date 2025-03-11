@@ -315,7 +315,6 @@ main .box-container .box img { width: 100%; height: auto; }
     justify-content: space-between;
     padding: 10px 20px;
     z-index: 1000;
-    background: var(--bg-color);
     transition: background 0.3s ease;
 }
 
@@ -354,8 +353,7 @@ main .box-container .box img { width: 100%; height: auto; }
 .time-icon {
     width: 24px;
     height: 24px;
-    background: url('images/clock-icon.png') no-repeat center; /* Add your clock icon */
-    background-size: contain;
+    transition: stroke 0.3s ease;
 }
 
 /* Adjust main content to not overlap with top bar */
