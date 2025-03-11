@@ -16,9 +16,9 @@
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 </head>
-<body>
+<body  data-theme="light">
     <!-- Header Start -->
-    <header>
+    <!-- <header>
         <ul>
             <li><a href="#">Home</a></li>
             <li><a href="#">News</a></li>
@@ -30,13 +30,15 @@
             <li><a href="#">Music</a></li>
             <li><a href="#">More</a></li>
         </ul>
-    </header>
+    </header> -->
     <!-- Header End --> 
-
+    <canvas id="gridCanvas"></canvas>
     <main>
         <div class="container">
             <div class="logo-block">
-                <a href="https://learncomputer.in/" target="_blank" rel="nofollow"><img src="images/logo.png" alt="Logo"></a>
+                <a href="https://learncomputer.in/" target="_blank" rel="nofollow">
+                  <img src="images/logo.png" data-dark-src="images/logo-light.png" alt="Logo" class="theme-logo">
+                </a>
             </div>
             <div class="nav-links" id="search-tabs">
                 <ul>
@@ -56,6 +58,10 @@
                         <li data-value="google"><img src="images/google.png" alt="Google"></li>
                         <li data-value="freepik"><img src="images/freepik.png" alt="Freepik"></li>
                         <li data-value="flaticon"><img src="images/flaticon.png" alt="Flaticon"></li>
+                        <li data-value="pinterest"><img src="images/pinterest.png" alt="Pinterest"></li>
+                        <li data-value="pexels"><img src="images/pexels.png" alt="Pexels"></li>
+                        <li data-value="codepen"><img src="images/codepen.png" alt="CodePen"></li>
+                        <li data-value="themeforest"><img src="images/themeforest.png" alt="ThemeForest"></li>
                         <li data-value="youtube"><img src="images/youtube.png" alt="YouTube"></li>
                         <li data-value="amazon"><img src="images/amazon.png" alt="Amazon"></li>
                         <li data-value="bing"><img src="images/bing-e1535596079626-100x46.png" alt="Bing"></li>
@@ -81,15 +87,15 @@
             </div>
             <ul class="box-container">
                 <li><a class="box" href="https://docs.learncomputer.in/" target="_blank" rel="nofollow"><img src="images/lca-docs.png" alt="LCA Docs"></a></li>
-                <li><a class="box" href="https://docs.learncomputer.in/resources/" target="_blank" rel="nofollow"><img src="images/resource.png" alt="LCA Resources"></a></li>
+                <li><a class="box" href="https://docs.learncomputer.in/resourses/" target="_blank" rel="nofollow"><img src="images/resource.png" alt="LCA Resources"></a></li>
                 <li><a class="box" href="https://wordpress.org/latest.zip" target="_blank" rel="nofollow"><img src="images/wordpress.png" alt="Download WordPress Latest"></a></li>
                 <li><a class="box" href="https://getbootstrap.com/" target="_blank" rel="nofollow"><img src="images/bootstrap.png" alt="Bootstrap"></a></li>
                 <li><a class="box" href="https://developers.google.com/speed/libraries#jquery" target="_blank" rel="nofollow"><img src="images/jquery.png" alt="jQuery"></a></li>
-                <li><a class="box" href="#" target="_blank" rel="nofollow"><img src="images/wikipedia-100x50.png" alt=""></a></li>
-                <li><a class="box" href="#" target="_blank" rel="nofollow"><img src="images/bing-e1535596079626-100x46.png" alt=""></a></li>
-                <li><a class="box" href="#" target="_blank" rel="nofollow"><img src="images/reddit-100x50.jpg" alt=""></a></li>
-                <li><a class="box" href="#" target="_blank" rel="nofollow"><img src="images/msn-100x50.jpg" alt=""></a></li>
-                <li><a class="box" href="#" target="_blank" rel="nofollow"><img src="images/twitter-100x50.jpg" alt=""></a></li>
+                <li><a class="box" href="https://themeforest.net/category/site-templates" target="_blank" rel="nofollow"><img src="images/themeforest.png" alt="ThemeForest"></a></li>
+                <li><a class="box" href="https://icon-sets.iconify.design/" target="_blank" rel="nofollow"><img src="images/iconify.png" alt=""></a></li>
+                <li><a class="box" href="https://picsum.photos/" target="_blank" rel="nofollow"><img src="images/lorem-picsum.png" alt=""></a></li>
+                <li><a class="box" href="https://generator.lorem-ipsum.info/" target="_blank" rel="nofollow"><img src="images/lorem-ipsum.png" alt=""></a></li>
+                <li><a class="box" href="https://www.w3schools.com/" target="_blank" rel="nofollow"><img src="images/w3schools.png" alt=""></a></li>
                 <li><a class="box" href="#" target="_blank" rel="nofollow"><img src="images/itunes-100x50.png" alt=""></a></li>
                 <li><a class="box" href="#" target="_blank" rel="nofollow"><img src="images/ebay-100x50.png" alt=""></a></li>
                 <li><a class="box" href="#" target="_blank" rel="nofollow"><img src="images/netflix-100x50.jpg" alt=""></a></li>
@@ -138,6 +144,9 @@
             </ul>
         </div>
     </section>
+    <button id="themeToggle" class="theme-toggle">
+      <span class="bulb"></span>
+    </button>
 
     <script>
     document.addEventListener("DOMContentLoaded", function () {
@@ -172,6 +181,10 @@
                 news: "https://news.search.yahoo.com/search?p="
             },
             duckduckgo: { web: "https://duckduckgo.com/?q=" },
+            pinterest: "https://www.pinterest.com/search/pins/?q=",
+            pexels: "https://www.pexels.com/search/",
+            codepen: "https://codepen.io/search/pens?q=",
+            themeforest: "https://themeforest.net/search/",
             freepik: "https://www.freepik.com/search?query=",
             flaticon: "https://www.flaticon.com/search?word=",
             youtube: "https://www.youtube.com/results?search_query=",
@@ -282,6 +295,75 @@
         searchInput.focus();
         updateTabsVisibility("google");
     });
+
+
+        // Styles
+        // Canvas Grid Background
+        const canvas = document.getElementById('gridCanvas');
+        const ctx = canvas.getContext('2d');
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        function drawGrid() {
+          ctx.clearRect(0, 0, canvas.width, canvas.height);
+          const gridSize = 50;
+          ctx.strokeStyle = document.body.dataset.theme === 'dark' ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)';
+          for (let x = 0; x <= canvas.width; x += gridSize) {
+            ctx.beginPath();
+            ctx.moveTo(x, 0);
+            ctx.lineTo(x, canvas.height);
+            ctx.stroke();
+          }
+          for (let y = 0; y <= canvas.height; y += gridSize) {
+            ctx.beginPath();
+            ctx.moveTo(0, y);
+            ctx.lineTo(canvas.width, y);
+            ctx.stroke();
+          }
+        }
+
+        window.addEventListener('resize', () => {
+          canvas.width = window.innerWidth;
+          canvas.height = window.innerHeight;
+          drawGrid();
+        });
+        drawGrid();
+
+        // Theme Toggle with Bulb Animation
+        // Theme Toggle with Local Storage
+        const toggleButton = document.getElementById('themeToggle');
+        const body = document.body;
+        const themeLogo = document.querySelector('.theme-logo');
+
+        // Function to set theme
+        function setTheme(theme) {
+            body.dataset.theme = theme;
+            themeLogo.src = theme === 'dark' ? themeLogo.dataset.darkSrc : 'images/logo.png';
+            drawGrid(); // Redraw grid with updated theme
+            localStorage.setItem('themePreference', theme); // Save preference
+        }
+
+        // Check for saved preference on page load
+        document.addEventListener("DOMContentLoaded", function () {
+            const savedTheme = localStorage.getItem('themePreference');
+            if (savedTheme) {
+                setTheme(savedTheme);
+            } else {
+                // Default to light if no preference is saved
+                setTheme('light');
+            }
+
+            // ... (keep your existing dropdown and search functionality here) ...
+
+            // Theme toggle button click handler
+            toggleButton.addEventListener('click', () => {
+                const currentTheme = body.dataset.theme;
+                const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+                setTheme(newTheme);
+            });
+        });
+        
+        
     </script>
 </body>
 </html>
