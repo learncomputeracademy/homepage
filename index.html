@@ -1,22 +1,29 @@
 <!DOCTYPE html>
-<html lang="en">
 <head>
+    <!-- Your existing meta tags and links -->
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
     <meta name="robots" content="noindex,nofollow" />
     <title>Learn Computer Academy Home Page</title>
     <link rel="icon" type="image/x-icon" href="https://www.google.com/s2/favicons?sz=64&domain_url=learncomputer.in">
-
-    <!-- Website CSS -->
     <link href="css/style.css" type="text/css" rel="stylesheet">
-
-    <!-- box-icon -->
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
-
+    <!-- Add Fira Code -->
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 </head>
 <body  data-theme="light">
+     <div class="top-bar">
+        <div class="weather-info">
+            <span class="weather-icon"></span>
+            <span class="weather-temp"></span>
+        </div>
+        <div class="time-info">
+            <span class="time-display"></span>
+            <span class="time-icon"></span>
+        </div>
+    </div>
     <!-- Header Start -->
     <!-- <header>
         <ul>
@@ -294,7 +301,36 @@
         searchInput.addEventListener("focus", function() { this.select(); });
         searchInput.focus();
         updateTabsVisibility("google");
-    });
+
+
+        // Weather API Fetch
+            const apiKey = '01e23240f8875c55945a9a43542cab00'; // Replace with your API key
+            const weatherTemp = document.querySelector('.weather-temp');
+            const weatherIcon = document.querySelector('.weather-icon');
+
+            fetch(`https://api.openweathermap.org/data/2.5/weather?lat=22.8420&lon=88.6560&units=metric&appid=${apiKey}`)
+                .then(response => response.json())
+                .then(data => {
+                    const temp = Math.round(data.main.temp);
+                    const iconCode = data.weather[0].icon;
+                    weatherTemp.textContent = `${temp}°C`;
+                    weatherIcon.style.backgroundImage = `url(http://openweathermap.org/img/wn/${iconCode}.png)`;
+                })
+                .catch(error => {
+                    console.error('Error fetching weather:', error);
+                    weatherTemp.textContent = 'Weather N/A';
+                });
+
+            // Time Display
+            const timeDisplay = document.querySelector('.time-display');
+            function updateTime() {
+                const now = new Date();
+                const options = { hour: 'numeric', minute: '2-digit', hour12: true };
+                timeDisplay.textContent = now.toLocaleTimeString('en-US', options);
+            }
+            updateTime();
+            setInterval(updateTime, 1000); // Update every second
+        });
 
 
         // Styles
