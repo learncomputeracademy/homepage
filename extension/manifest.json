@@ -1,26 +1,31 @@
-// manifest.json
 {
-  "name": "Computer Center Homepage",
+  "manifest_version": 2,
+  "name": "LCA Homepage",
   "version": "1.0",
-  "description": "Sets Computer Center as the homepage for new tabs and browser launch",
-  "manifest_version": 3,
-  "permissions": ["tabs"],
+  "description": "Sets Computer Center as homepage and new tab page",
+  
   "chrome_url_overrides": {
     "newtab": "newtab.html"
   },
+  
+  "permissions": [
+    "tabs"
+  ],
+  
   "background": {
-    "service_worker": "background.js"
+    "scripts": ["background.js"],
+    "persistent": false
   },
-  "action": {
-    "default_icon": {
-      "16": "icon16.png",
-      "48": "icon48.png",
-      "128": "icon128.png"
-    }
-  },
+  
   "icons": {
-    "16": "icon16.png",
-    "48": "icon48.png",
-    "128": "icon128.png"
+    "16": "icons/icon16.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  },
+  
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "computer-center@homepage-extension"
+    }
   }
 }
