@@ -1,3 +1,2 @@
-document.addEventListener("DOMContentLoaded", function() {
-  window.location.href = "https://homepage.computercenter.in/";
-});
+// newtab.js
+window.location.replace("https://homepage.computercenter.in/");

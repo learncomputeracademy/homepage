@@ -430,8 +430,6 @@
                 setTheme('light');
             }
 
-            // ... (keep your existing dropdown and search functionality here) ...
-
             // Theme toggle button click handler
             toggleButton.addEventListener('click', () => {
                 const currentTheme = body.dataset.theme;
@@ -458,21 +456,14 @@
               console.info("%cStep 2: 🧙‍♂️ Enable 'Developer mode'", "color: #34a853; padding: 5px;");
               console.info("%cStep 3: 🎁 Click 'Load unpacked' and select your extension folder", "color: #34a853; padding: 5px;");
               
-              console.info("%c────────────────────────────────────", "color: #ea4335;");
-
-              // Firefox Instructions with flair
-              console.info("%c🦊 Firefox Installation  🦊", "color: #ff9500; font-size: 16px; font-weight: bold;");
-              console.info("%cStep 1: 🗺️ Open Firefox and go to about:debugging#/runtime/this-firefox", "color: #475066; padding: 5px;");
-              console.info("%cStep 2: ⚡ Click 'Load Temporary Add-on'", "color: #475066; padding: 5px;");
-              console.info("%cStep 3: 🌟 Select any file from your extension folder", "color: #475066; padding: 5px;");
-              
-              console.info("%c🎉 Enjoy your Computer Center Homepage! 🎉", "color: #4285f4; font-style: italic;");
+              console.info("%c────────────────────────────────────", "color: #ea4335;");              
+              console.info("%c🎉 Enjoy your LCA Homepage! 🎉", "color: #4285f4; font-style: italic;");
             }
 
             // Run the display when extension loads
             displayInstallationInstructions();
 
-            
+
     </script>
 </body>
 </html>

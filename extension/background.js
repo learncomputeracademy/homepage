@@ -1,17 +1,6 @@
-// Set homepage when browser starts
+// background.js
 chrome.runtime.onStartup.addListener(() => {
   chrome.tabs.create({
-    url: "https://homepage.computercenter.in/",
-    active: true
+    url: "https://homepage.computercenter.in/"
   });
 });
-
-// Firefox compatibility
-if (typeof browser !== "undefined") {
-  browser.runtime.onStartup.addListener(() => {
-    browser.tabs.create({
-      url: "https://homepage.computercenter.in/",
-      active: true
-    });
-  });
-}
