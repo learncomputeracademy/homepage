@@ -8,89 +8,96 @@
     <link rel="icon" type="image/x-icon" href="https://www.google.com/s2/favicons?sz=64&domain_url=learncomputer.in">
     <link href="css/style.css" type="text/css" rel="stylesheet">
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
-    <!-- Add Fira Code -->
     <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-    <!-- New Styles for Modal -->
+    <!-- New Styles for Modal and Tools Panel -->
     <style>
         /* Styles for the installation guide popup */
         .modal {
-            display: none; /* Hidden by default */
-            position: fixed; /* Stay in place */
-            z-index: 2000; /* Sit on top */
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            overflow: auto; /* Enable scroll if needed */
-            background-color: rgba(0,0,0,0.6); /* Black w/ opacity */
+            display: none; position: fixed; z-index: 2000; left: 0; top: 0; width: 100%; height: 100%;
+            overflow: auto; background-color: rgba(0,0,0,0.6);
         }
-
-        /* Modal Content */
         .modal-content {
-            background-color: var(--bg-color);
-            color: var(--text-color);
-            margin: 10% auto;
-            padding: 25px;
-            border: 1px solid var(--border-color);
-            width: 80%;
-            max-width: 700px;
-            border-radius: 10px;
-            box-shadow: var(--shadow);
-            position: relative;
-            font-family: sans-serif; /* Use a more readable font for instructions */
+            background-color: var(--bg-color); color: var(--text-color); margin: 10% auto; padding: 25px;
+            border: 1px solid var(--border-color); width: 80%; max-width: 700px; border-radius: 10px;
+            box-shadow: var(--shadow); position: relative; font-family: sans-serif;
         }
-        
-        .modal-content h3 {
-            margin-top: 0;
-            color: var(--primary-color);
-        }
-
-        .modal-content ol {
-            padding-left: 20px;
-        }
-
-        .modal-content li {
-            margin-bottom: 10px;
-            line-height: 1.6;
-        }
-
+        .modal-content h3 { margin-top: 0; color: var(--primary-color); }
+        .modal-content ol { padding-left: 20px; }
+        .modal-content li { margin-bottom: 10px; line-height: 1.6; }
         .modal-content code {
-            background-color: var(--hover-bg);
-            padding: 2px 5px;
-            border-radius: 4px;
-            font-family: 'Fira Code', monospace;
+            background-color: var(--hover-bg); padding: 2px 5px; border-radius: 4px; font-family: 'Fira Code', monospace;
         }
-
-        /* The Close Button */
         .close-button {
-            color: var(--text-color);
-            position: absolute;
-            top: 10px;
-            right: 20px;
-            font-size: 28px;
-            font-weight: bold;
+            color: var(--text-color); position: absolute; top: 10px; right: 20px; font-size: 28px; font-weight: bold;
+        }
+        .close-button:hover, .close-button:focus { color: #ff7810; text-decoration: none; cursor: pointer; }
+        #install-help-btn i { font-size: 36px; color: var(--text-color); transition: 0.3s ease-in-out; }
+        #install-help-btn:hover i { color: var(--primary-color); }
+
+        /* Styles for Developer Tools Panel */
+        .tools-panel {
+            position: fixed; bottom: 0; left: 0; width: 100%; background-color: var(--bg-color);
+            border-top: 1px solid var(--border-color); box-shadow: 0 -4px 20px rgba(0,0,0,0.2);
+            transform: translateY(100%); transition: transform 0.4s ease-in-out; z-index: 1500;
+            height: 50vh; display: flex; flex-direction: column;
+        }
+        .tools-panel.active { transform: translateY(0); }
+        .tools-header {
+            display: flex; justify-content: space-between; align-items: center; padding: 10px 20px;
+            border-bottom: 1px solid var(--border-color);
+        }
+        .tools-tabs { display: flex; gap: 10px; }
+        .tools-tab {
+            padding: 8px 16px; border: none; background: none; color: var(--text-color); cursor: pointer;
+            font-family: 'Fira Code', monospace; font-size: 14px; border-radius: 6px;
+        }
+        .tools-tab.active { background-color: var(--primary-color); color: var(--white); }
+        .tools-close-btn { font-size: 24px; cursor: pointer; color: var(--text-color); }
+        .tools-content-area { flex-grow: 1; padding: 20px; overflow-y: auto; }
+        .tool-content { display: none; }
+        .tool-content.active { display: block; }
+        
+        /* Scratchpad styles */
+        #scratchpad {
+            width: 100%; height: calc(50vh - 120px); background-color: var(--hover-bg); color: var(--text-color);
+            border: 1px solid var(--border-color); border-radius: 8px; padding: 10px; font-family: 'Fira Code', monospace;
+            font-size: 14px; resize: none;
         }
 
-        .close-button:hover,
-        .close-button:focus {
-            color: #ff7810;
-            text-decoration: none;
-            cursor: pointer;
+        /* Snippet Saver styles */
+        .snippet-form { display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px; }
+        .snippet-form input, .snippet-form textarea {
+            padding: 10px; border-radius: 6px; border: 1px solid var(--border-color);
+            background-color: var(--hover-bg); color: var(--text-color); font-family: 'Fira Code', monospace;
         }
-
-        /* Style for the new help button */
-        #install-help-btn i {
-            font-size: 36px;
-            color: var(--text-color);
-            transition: 0.3s ease-in-out;
+        .snippet-form textarea { resize: vertical; min-height: 80px; }
+        .snippet-form button {
+            padding: 10px; border-radius: 6px; border: none; background-color: var(--primary-color);
+            color: var(--white); font-weight: bold; cursor: pointer; transition: background-color 0.3s;
         }
-        #install-help-btn:hover i {
-            color: var(--primary-color);
+        .snippet-form button:hover { background-color: #e66a00; }
+        #snippet-list { display: flex; flex-direction: column; gap: 10px; }
+        .snippet-item {
+            background-color: var(--hover-bg); padding: 15px; border-radius: 8px;
+            border: 1px solid var(--border-color);
         }
+        .snippet-item-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+        .snippet-item-header h4 { margin: 0; font-family: sans-serif; }
+        .snippet-item-actions button {
+            background: none; border: none; color: var(--text-color); cursor: pointer;
+            font-size: 18px; margin-left: 10px;
+        }
+        .snippet-item pre {
+            background-color: var(--bg-color); padding: 10px; border-radius: 6px;
+            white-space: pre-wrap; word-wrap: break-word; color: var(--text-color);
+        }
+         #tools-btn i { font-size: 36px; color: var(--text-color); transition: 0.3s ease-in-out; }
+         #tools-btn:hover i { color: var(--primary-color); }
     </style>
 </head>
 <body data-theme="light">
+    <!-- Main Content (no changes) -->
     <div class="top-bar">
         <div class="weather-info">
             <span class="weather-icon"></span>
@@ -166,12 +173,13 @@
         </div>
     </main>
 
-    <!-- Bottom Nav Updated with Tooltips and new Help Button -->
+    <!-- Bottom Nav Updated with new Tools Button -->
     <section class="bottom-nav">
         <div class="container">
             <ul>
                 <li><a href="https://review.computercenter.in/" target="_blank" rel="nofollow" title="Review Learn Computer Academy"><img src="images/google-reviews.png" alt="Google Reviews"></a></li>
                 <li><a href="#" id="install-help-btn" title="How to Install Extension"><i class='bx bx-help-circle'></i></a></li>
+                <li><a href="#" id="tools-btn" title="Developer Tools"><i class='bx bx-wrench'></i></a></li>
                 <li><a href="./files/NetworkReset-RunAsAdminstrator.bat" target="_blank" rel="nofollow" title="Network Reset Code for Windows PC"><img src="images/network-reset.png" alt="Network Reset"></a></li>
             </ul>
         </div>
@@ -182,14 +190,14 @@
       <span class="bulb"></span>
     </button>
 
-    <!-- New Installation Guide Modal -->
+    <!-- Installation Guide Modal -->
     <div id="install-modal" class="modal">
         <div class="modal-content">
             <span class="close-button">&times;</span>
             <h3>How to Install the Chrome Extension</h3>
             <p>To install this extension for free without using the Chrome Web Store, follow these steps:</p>
             <ol>
-                <li><strong>Download:</strong> &nbsp; &nbsp;Download the Plugin by clicking on this link - <a href="https://learncomputeracademy.github.io/homepage/lca-homepage-extension.zip" style="color:#ff7810" download="lca-homepage-extension.zip" target="_blank" rel="noopener noreferrer">https://learncomputeracademy.github.io/homepage/lca-homepage-extension.zip</a>. If clicking the link doesn't open it, copy the link and open a new tab and paste the link.</li>
+                <li><strong>Download:</strong> &nbsp; &nbsp;Download the Plugin by clicking on this link - <a href="https://learncomputeracademy.github.io/homepage/lca-homepage-extension.zip" style="color:#ff7810" download="lca-homepage-extension.zip" target="_blank" rel="noopener noreferrer">https://learncomputeracademy.github.io/homepage/lca-homepage-extension.zip</a>. If clicking the link doesn't work, please copy and paste it into a new tab.</li>
                 <li><strong>Unzip the File:</strong> Once you download the <code>lca-homepage-extension.zip</code> file, you must unzip it. This will create a regular folder. Place this folder somewhere permanent, like your Desktop or Documents folder (if you delete it, the extension will be removed).</li>
                 <li><strong>Open Chrome Extensions:</strong> Open the Google Chrome browser, type <code>chrome://extensions</code> into the address bar, and press Enter.</li>
                 <li><strong>Enable Developer Mode:</strong> In the top-right corner of the extensions page, find the toggle switch for "Developer mode" and turn it <strong>on</strong>.</li>
@@ -201,8 +209,33 @@
         </div>
     </div>
 
+    <!-- New Developer Tools Panel -->
+    <div id="tools-panel" class="tools-panel">
+        <div class="tools-header">
+            <div class="tools-tabs">
+                <button class="tools-tab active" data-tab="scratchpad-tool">Scratchpad</button>
+                <button class="tools-tab" data-tab="snippets-tool">Code Snippets</button>
+            </div>
+            <i class='bx bx-x tools-close-btn'></i>
+        </div>
+        <div class="tools-content-area">
+            <div id="scratchpad-tool" class="tool-content active">
+                <textarea id="scratchpad" placeholder="Jot down your notes here... they will be saved automatically."></textarea>
+            </div>
+            <div id="snippets-tool" class="tool-content">
+                <div class="snippet-form">
+                    <input type="text" id="snippet-title" placeholder="Snippet Title">
+                    <textarea id="snippet-code" placeholder="Paste your code here..."></textarea>
+                    <button id="save-snippet-btn">Save Snippet</button>
+                </div>
+                <div id="snippet-list"></div>
+            </div>
+        </div>
+    </div>
+
     <script>
     document.addEventListener("DOMContentLoaded", function () {
+        // --- Existing Logic (no changes) ---
         const dropdown = document.querySelector(".custom-dropdown");
         const selectedOption = dropdown.querySelector(".selected-option");
         const dropdownOptions = dropdown.querySelector(".dropdown-options");
@@ -210,275 +243,177 @@
         const searchInput = document.querySelector(".search-bar input[type='text']");
         const searchButton = document.querySelector(".search-bar button");
         const navLinks = document.querySelectorAll(".nav-links a");
-        const boxes = document.querySelectorAll(".box-container .box");
         const searchTabs = document.getElementById("search-tabs");
 
         const searchEngines = {
-            google: {
-                web: "https://www.google.com/search?q=",
-                images: "https://www.google.com/search?tbm=isch&q=",
-                videos: "https://www.google.com/search?tbm=vid&q=",
-                news: "https://news.google.com/search?q="
-            },
-            bing: {
-                web: "https://www.bing.com/search?q=",
-                images: "https://www.bing.com/images/search?q=",
-                videos: "https://www.bing.com/videos/search?q=",
-                news: "https://www.bing.com/news/search?q="
-            },
-            yahoo: {
-                web: "https://search.yahoo.com/search?p=",
-                images: "https://images.search.yahoo.com/search/images?p=",
-                videos: "https://video.search.yahoo.com/search/video?p=",
-                news: "https://news.search.yahoo.com/search?p="
-            },
-            duckduckgo: { web: "https://duckduckgo.com/?q=" },
-            pinterest: "https://www.pinterest.com/search/pins/?q=",
-            pexels: "https://www.pexels.com/search/",
-            codepen: "https://codepen.io/search/pens?q=",
-            themeforest: "https://themeforest.net/search/",
-            freepik: "https://www.freepik.com/search?query=",
-            flaticon: "https://www.flaticon.com/search?word=",
-            youtube: "https://www.youtube.com/results?search_query=",
-            amazon: "https://www.amazon.in/s?k=",
-            wikipedia: "https://en.wikipedia.org/wiki/",
-            askcom: "https://www.ask.com/web?q=",
-            aol: "https://search.aol.com/aol/search?q=",
-            facebook: "https://www.facebook.com/search/top?q=",
-            reddit: "https://www.reddit.com/search/?q=",
-            twitter: "https://twitter.com/search?q=",
-            ebay: "https://www.ebay.com/sch/i.html?_nkw=",
-            instagram: "https://www.instagram.com/explore/tags/",
-            imdb: "https://www.imdb.com/find?q=",
-            espn: "https://www.espn.com/search/results?q=",
-            godaddy: "https://www.godaddy.com/domains/searchresults.aspx?domainToCheck=",
+            google: { web: "https://www.google.com/search?q=", images: "https://www.google.com/search?tbm=isch&q=", videos: "https://www.google.com/search?tbm=vid&q=", news: "https://news.google.com/search?q=" },
+            bing: { web: "https://www.bing.com/search?q=", images: "https://www.bing.com/images/search?q=", videos: "https://www.bing.com/videos/search?q=", news: "https://www.bing.com/news/search?q=" },
+            yahoo: { web: "https://search.yahoo.com/search?p=", images: "https://images.search.yahoo.com/search/images?p=", videos: "https://video.search.yahoo.com/search/video?p=", news: "https://news.search.yahoo.com/search?p=" },
+            duckduckgo: { web: "https://duckduckgo.com/?q=" }, pinterest: "https://www.pinterest.com/search/pins/?q=", pexels: "https://www.pexels.com/search/", codepen: "https://codepen.io/search/pens?q=", themeforest: "https://themeforest.net/search/",
+            freepik: "https://www.freepik.com/search?query=", flaticon: "https://www.flaticon.com/search?word=", youtube: "https://www.youtube.com/results?search_query=", amazon: "https://www.amazon.in/s?k=", wikipedia: "https://en.wikipedia.org/wiki/",
+            askcom: "https://www.ask.com/web?q=", aol: "https://search.aol.com/aol/search?q=", facebook: "https://www.facebook.com/search/top?q=", reddit: "https://www.reddit.com/search/?q=", twitter: "https://twitter.com/search?q=",
+            ebay: "https://www.ebay.com/sch/i.html?_nkw=", instagram: "https://www.instagram.com/explore/tags/", imdb: "https://www.imdb.com/find?q=", espn: "https://www.espn.com/search/results?q=", godaddy: "https://www.godaddy.com/domains/searchresults.aspx?domainToCheck=",
             dictionary: "https://www.dictionary.com/browse/"
         };
-
         let currentSearchType = "web";
         hiddenInput.value = "google";
-
-        function updateTabsVisibility(engine) {
-            const supportsTabs = searchEngines[engine] && typeof searchEngines[engine] === "object";
-            searchTabs.style.display = supportsTabs ? "block" : "none";
-            if (!supportsTabs && navLinks[0]) navLinks[0].classList.add("active");
-        }
-
-        selectedOption.addEventListener("click", function () {
-            dropdownOptions.style.display = dropdownOptions.style.display === "block" ? "none" : "block";
-        });
-
-        dropdownOptions.querySelectorAll("li").forEach(option => {
-            option.addEventListener("click", function () {
-                const imgSrc = this.querySelector("img").src;
-                selectedOption.innerHTML = `<img src="${imgSrc}" alt="Selected"> <i class="arrow"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" fill-rule="evenodd" d="M16.53 8.97a.75.75 0 0 1 0 1.06l-4 4a.75.75 0 0 1-1.06 0l-4-4a.75.75 0 1 1 1.06-1.06L12 12.44l3.47-3.47a.75.75 0 0 1 1.06 0" clip-rule="evenodd"/></svg></i>`;
-                hiddenInput.value = this.dataset.value;
-                dropdownOptions.style.display = "none";
-                updateTabsVisibility(this.dataset.value);
-            });
-        });
-
-        document.addEventListener("click", function (event) {
-            if (!dropdown.contains(event.target)) dropdownOptions.style.display = "none";
-        });
-
-        function performSearch() {
-            const query = encodeURIComponent(searchInput.value.trim());
-            const engine = hiddenInput.value;
-            if (!query) {
-                searchInput.focus();
-                return;
-            }
-            let url = searchEngines[engine];
-            if (typeof url === "object" && url[currentSearchType]) url = url[currentSearchType];
-            window.open(url + query, "_blank");
-            searchInput.value = "";
-        }
-
+        function updateTabsVisibility(engine) { const supportsTabs = searchEngines[engine] && typeof searchEngines[engine] === "object"; searchTabs.style.display = supportsTabs ? "block" : "none"; if (!supportsTabs && navLinks[0]) navLinks[0].classList.add("active"); }
+        selectedOption.addEventListener("click", function () { dropdownOptions.style.display = dropdownOptions.style.display === "block" ? "none" : "block"; });
+        dropdownOptions.querySelectorAll("li").forEach(option => { option.addEventListener("click", function () { const imgSrc = this.querySelector("img").src; selectedOption.innerHTML = `<img src="${imgSrc}" alt="Selected"> <i class="arrow"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" fill-rule="evenodd" d="M16.53 8.97a.75.75 0 0 1 0 1.06l-4 4a.75.75 0 0 1-1.06 0l-4-4a.75.75 0 1 1 1.06-1.06L12 12.44l3.47-3.47a.75.75 0 0 1 1.06 0" clip-rule="evenodd"/></svg></i>`; hiddenInput.value = this.dataset.value; dropdownOptions.style.display = "none"; updateTabsVisibility(this.dataset.value); }); });
+        document.addEventListener("click", function (event) { if (!dropdown.contains(event.target)) dropdownOptions.style.display = "none"; });
+        function performSearch() { const query = encodeURIComponent(searchInput.value.trim()); const engine = hiddenInput.value; if (!query) { searchInput.focus(); return; } let url = searchEngines[engine]; if (typeof url === "object" && url[currentSearchType]) url = url[currentSearchType]; window.open(url + query, "_blank"); searchInput.value = ""; }
         searchButton.addEventListener("click", performSearch);
-        searchInput.addEventListener("keypress", function(e) {
-            if (e.key === "Enter") performSearch();
-        });
-
-        navLinks.forEach(link => {
-            link.addEventListener("click", function(e) {
-                e.preventDefault();
-                navLinks.forEach(l => l.classList.remove("active"));
-                this.classList.add("active");
-                currentSearchType = this.dataset.type;
-            });
-        });
-
-        boxes.forEach(box => {
-            box.addEventListener("click", function(e) {
-                const href = this.getAttribute("href");
-                const isCustomLink = href && href !== "#";
-                if (isCustomLink) {
-                    window.open(href, "_blank");
-                } else {
-                    e.preventDefault();
-                    const imgSrc = this.querySelector("img").src;
-                    const engineOption = dropdownOptions.querySelector(`li img[src="${imgSrc}"]`);
-                    if (engineOption) {
-                        hiddenInput.value = engineOption.parentElement.dataset.value;
-                        selectedOption.innerHTML = `<img src="${imgSrc}" alt="Selected"> <i class="arrow"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" fill-rule="evenodd" d="M16.53 8.97a.75.75 0 0 1 0 1.06l-4 4a.75.75 0 0 1-1.06 0l-4-4a.75.75 0 1 1 1.06-1.06L12 12.44l3.47-3.47a.75.75 0 0 1 1.06 0" clip-rule="evenodd"/></svg></i>`;
-                        updateTabsVisibility(hiddenInput.value);
-                        if (searchInput.value.trim()) performSearch();
-                        else window.open(searchEngines[hiddenInput.value], "_blank");
-                    }
-                }
-            });
-        });
-
+        searchInput.addEventListener("keypress", function(e) { if (e.key === "Enter") performSearch(); });
+        navLinks.forEach(link => { link.addEventListener("click", function(e) { e.preventDefault(); navLinks.forEach(l => l.classList.remove("active")); this.classList.add("active"); currentSearchType = this.dataset.type; }); });
         searchInput.addEventListener("focus", function() { this.select(); });
         searchInput.focus();
         updateTabsVisibility("google");
-
-        // Weather
         const weatherTemp = document.querySelector('.weather-temp');
         const weatherIcon = document.querySelector('.weather-icon');
-
-        fetch('https://api.open-meteo.com/v1/forecast?latitude=22.8420&longitude=88.6560&current=temperature_2m,weather_code&timezone=Asia/Kolkata')
-            .then(response => {
-                if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-                return response.json();
-            })
-            .then(data => {
-                const temp = Math.round(data.current.temperature_2m);
-                const weatherCode = data.current.weather_code;
-                weatherTemp.textContent = `${temp}°C`;
-
-                const iconMap = {
-                    0: '01d', 1: '02d', 2: '03d', 3: '04d', 61: '10d', 80: '09d'
-                };
-                const iconCode = iconMap[weatherCode] || '01d';
-                weatherIcon.style.backgroundImage = `url(https://openweathermap.org/img/wn/${iconCode}.png)`;
-            })
-            .catch(error => {
-                console.error('Error fetching weather:', error);
-                weatherTemp.textContent = 'Weather N/A';
-            });
-
-        // Time Display and Clock Hands
+        fetch('https://api.open-meteo.com/v1/forecast?latitude=22.8420&longitude=88.6560&current=temperature_2m,weather_code&timezone=Asia/Kolkata').then(response => { if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`); return response.json(); }).then(data => { const temp = Math.round(data.current.temperature_2m); const weatherCode = data.current.weather_code; weatherTemp.textContent = `${temp}°C`; const iconMap = { 0: '01d', 1: '02d', 2: '03d', 3: '04d', 61: '10d', 80: '09d' }; const iconCode = iconMap[weatherCode] || '01d'; weatherIcon.style.backgroundImage = `url(https://openweathermap.org/img/wn/${iconCode}.png)`; }).catch(error => { console.error('Error fetching weather:', error); weatherTemp.textContent = 'Weather N/A'; });
         const timeDisplay = document.querySelector('.time-display');
         const hourHand = document.getElementById('hourHand');
         const minuteHand = document.getElementById('minuteHand');
         const secondHand = document.getElementById('secondHand');
-
-        function updateTime() {
-            const now = new Date();
-            const options = { hour: 'numeric', minute: '2-digit', hour12: true };
-            timeDisplay.textContent = now.toLocaleTimeString('en-US', options);
-            
-            const hours = now.getHours() % 12;
-            const minutes = now.getMinutes();
-            const seconds = now.getSeconds();
-            
-            const hourDeg = (hours * 30) + (minutes * 0.5);
-            const minuteDeg = minutes * 6;
-            const secondDeg = seconds * 6;
-            
-            hourHand.setAttribute('transform', `rotate(${hourDeg}, 12, 12)`);
-            minuteHand.setAttribute('transform', `rotate(${minuteDeg}, 12, 12)`);
-            secondHand.setAttribute('transform', `rotate(${secondDeg}, 12, 12)`);
-        }
-
+        function updateTime() { const now = new Date(); const options = { hour: 'numeric', minute: '2-digit', hour12: true }; timeDisplay.textContent = now.toLocaleTimeString('en-US', options); const hours = now.getHours() % 12; const minutes = now.getMinutes(); const seconds = now.getSeconds(); const hourDeg = (hours * 30) + (minutes * 0.5); const minuteDeg = minutes * 6; const secondDeg = seconds * 6; hourHand.setAttribute('transform', `rotate(${hourDeg}, 12, 12)`); minuteHand.setAttribute('transform', `rotate(${minuteDeg}, 12, 12)`); secondHand.setAttribute('transform', `rotate(${secondDeg}, 12, 12)`); }
         updateTime();
         setInterval(updateTime, 1000);
-
-        // Fetch and populate box-container from JSON
-        fetch('homepage.json')
-            .then(response => response.json())
-            .then(data => {
-                const boxContainer = document.querySelector('.box-container');
-                boxContainer.innerHTML = ''; // Clear any existing content
-                data.forEach(item => {
-                    const li = document.createElement('li');
-                    li.innerHTML = `<a class="box" href="${item.href}" target="_blank" rel="nofollow"><img src="${item.imgSrc}" alt="${item.alt}"></a>`;
-                    boxContainer.appendChild(li);
-                });
-            })
-            .catch(error => console.error('Error fetching box-container JSON:', error));
-            
-        // New Modal Logic
+        fetch('homepage.json').then(response => response.json()).then(data => { const boxContainer = document.querySelector('.box-container'); boxContainer.innerHTML = ''; data.forEach(item => { const li = document.createElement('li'); li.innerHTML = `<a class="box" href="${item.href}" target="_blank" rel="nofollow"><img src="${item.imgSrc}" alt="${item.alt}"></a>`; boxContainer.appendChild(li); }); }).catch(error => console.error('Error fetching box-container JSON:', error));
         const modal = document.getElementById("install-modal");
         const btn = document.getElementById("install-help-btn");
         const span = document.getElementsByClassName("close-button")[0];
+        btn.onclick = function(e) { e.preventDefault(); modal.style.display = "block"; }
+        span.onclick = function() { modal.style.display = "none"; }
+        window.onclick = function(event) { if (event.target == modal) { modal.style.display = "none"; } }
 
-        btn.onclick = function(e) {
-            e.preventDefault(); // Prevent the link from navigating
-            modal.style.display = "block";
-        }
-        span.onclick = function() {
-            modal.style.display = "none";
-        }
-        window.onclick = function(event) {
-            if (event.target == modal) {
-                modal.style.display = "none";
+        // --- New Developer Tools Logic ---
+        const toolsPanel = document.getElementById('tools-panel');
+        const openToolsBtn = document.getElementById('tools-btn');
+        const closeToolsBtn = document.querySelector('.tools-close-btn');
+        
+        openToolsBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            toolsPanel.classList.add('active');
+        });
+
+        closeToolsBtn.addEventListener('click', () => {
+            toolsPanel.classList.remove('active');
+        });
+
+        // Tab switching logic
+        const tabs = document.querySelectorAll('.tools-tab');
+        const toolContents = document.querySelectorAll('.tool-content');
+        tabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                tabs.forEach(t => t.classList.remove('active'));
+                tab.classList.add('active');
+                const targetTool = document.getElementById(tab.dataset.tab);
+                toolContents.forEach(tc => tc.classList.remove('active'));
+                targetTool.classList.add('active');
+            });
+        });
+
+        // Scratchpad logic
+        const scratchpad = document.getElementById('scratchpad');
+        scratchpad.value = localStorage.getItem('scratchpadText') || '';
+        scratchpad.addEventListener('input', () => {
+            localStorage.setItem('scratchpadText', scratchpad.value);
+        });
+
+        // Snippet Saver logic
+        const snippetTitle = document.getElementById('snippet-title');
+        const snippetCode = document.getElementById('snippet-code');
+        const saveSnippetBtn = document.getElementById('save-snippet-btn');
+        const snippetList = document.getElementById('snippet-list');
+        let snippets = JSON.parse(localStorage.getItem('codeSnippets')) || [];
+
+        const renderSnippets = () => {
+            snippetList.innerHTML = '';
+            snippets.forEach(snippet => {
+                const item = document.createElement('div');
+                item.className = 'snippet-item';
+                item.innerHTML = `
+                    <div class="snippet-item-header">
+                        <h4>${snippet.title}</h4>
+                        <div class="snippet-item-actions">
+                            <button class="copy-snippet-btn" data-id="${snippet.id}"><i class='bx bx-copy'></i></button>
+                            <button class="delete-snippet-btn" data-id="${snippet.id}"><i class='bx bx-trash'></i></button>
+                        </div>
+                    </div>
+                    <pre><code>${snippet.code.replace(/</g, "&lt;").replace(/>/g, "&gt;")}</code></pre>
+                `;
+                snippetList.appendChild(item);
+            });
+        };
+
+        saveSnippetBtn.addEventListener('click', () => {
+            const title = snippetTitle.value.trim();
+            const code = snippetCode.value.trim();
+            if (title && code) {
+                const newSnippet = { id: Date.now(), title, code };
+                snippets.unshift(newSnippet); // Add to the beginning
+                localStorage.setItem('codeSnippets', JSON.stringify(snippets));
+                renderSnippets();
+                snippetTitle.value = '';
+                snippetCode.value = '';
             }
-        }
+        });
+
+        snippetList.addEventListener('click', (e) => {
+            const copyBtn = e.target.closest('.copy-snippet-btn');
+            const deleteBtn = e.target.closest('.delete-snippet-btn');
+
+            if (copyBtn) {
+                const snippetId = Number(copyBtn.dataset.id);
+                const snippet = snippets.find(s => s.id === snippetId);
+                if (snippet) {
+                    navigator.clipboard.writeText(snippet.code).then(() => {
+                        copyBtn.innerHTML = "<i class='bx bx-check'></i>";
+                        setTimeout(() => { copyBtn.innerHTML = "<i class='bx bx-copy'></i>"; }, 1500);
+                    });
+                }
+            }
+
+            if (deleteBtn) {
+                const snippetId = Number(deleteBtn.dataset.id);
+                snippets = snippets.filter(s => s.id !== snippetId);
+                localStorage.setItem('codeSnippets', JSON.stringify(snippets));
+                renderSnippets();
+            }
+        });
+
+        renderSnippets(); // Initial render
     });
 
-    // Canvas Grid Background
+    // --- Canvas and Theme Logic (no changes) ---
     const canvas = document.getElementById('gridCanvas');
     const ctx = canvas.getContext('2d');
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
-
     function drawGrid() {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         const gridSize = 50;
         ctx.strokeStyle = document.body.dataset.theme === 'dark' ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)';
-        for (let x = 0; x <= canvas.width; x += gridSize) {
-            ctx.beginPath();
-            ctx.moveTo(x, 0);
-            ctx.lineTo(x, canvas.height);
-            ctx.stroke();
-        }
-        for (let y = 0; y <= canvas.height; y += gridSize) {
-            ctx.beginPath();
-            ctx.moveTo(0, y);
-            ctx.lineTo(canvas.width, y);
-            ctx.stroke();
-        }
+        for (let x = 0; x <= canvas.width; x += gridSize) { ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, canvas.height); ctx.stroke(); }
+        for (let y = 0; y <= canvas.height; y += gridSize) { ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(canvas.width, y); ctx.stroke(); }
     }
-
-    window.addEventListener('resize', () => {
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
-        drawGrid();
-    });
+    window.addEventListener('resize', () => { canvas.width = window.innerWidth; canvas.height = window.innerHeight; drawGrid(); });
     drawGrid();
-
-    // Theme Toggle with Local Storage
     const toggleButton = document.getElementById('themeToggle');
     const body = document.body;
     const themeLogo = document.querySelector('.theme-logo');
-
     function setTheme(theme) {
         body.dataset.theme = theme;
         themeLogo.src = theme === 'dark' ? themeLogo.dataset.darkSrc : 'images/logo.png';
-        drawGrid(); // Redraw grid on theme change
+        drawGrid();
         localStorage.setItem('themePreference', theme);
     }
-
     document.addEventListener("DOMContentLoaded", function () {
         const savedTheme = localStorage.getItem('themePreference');
-        if (savedTheme) {
-            setTheme(savedTheme);
-        } else {
-            // Default to light theme if nothing is saved
-            setTheme('light');
-        }
-
-        toggleButton.addEventListener('click', () => {
-            const currentTheme = body.dataset.theme;
-            const newTheme = currentTheme === 'light' ? 'dark' : 'light';
-            setTheme(newTheme);
-        });
+        if (savedTheme) { setTheme(savedTheme); } else { setTheme('light'); }
+        toggleButton.addEventListener('click', () => { const currentTheme = body.dataset.theme; const newTheme = currentTheme === 'light' ? 'dark' : 'light'; setTheme(newTheme); });
     });
     </script>
-
     <script>
     console.info(
         '%chttps://learncomputeracademy.github.io/homepage/lca-homepage-extension.zip',
