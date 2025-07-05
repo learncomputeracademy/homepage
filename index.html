@@ -11,6 +11,84 @@
     <!-- Add Fira Code -->
     <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <!-- New Styles for Modal -->
+    <style>
+        /* Styles for the installation guide popup */
+        .modal {
+            display: none; /* Hidden by default */
+            position: fixed; /* Stay in place */
+            z-index: 2000; /* Sit on top */
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto; /* Enable scroll if needed */
+            background-color: rgba(0,0,0,0.6); /* Black w/ opacity */
+        }
+
+        /* Modal Content */
+        .modal-content {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 10% auto;
+            padding: 25px;
+            border: 1px solid var(--border-color);
+            width: 80%;
+            max-width: 700px;
+            border-radius: 10px;
+            box-shadow: var(--shadow);
+            position: relative;
+            font-family: sans-serif; /* Use a more readable font for instructions */
+        }
+        
+        .modal-content h3 {
+            margin-top: 0;
+            color: var(--primary-color);
+        }
+
+        .modal-content ol {
+            padding-left: 20px;
+        }
+
+        .modal-content li {
+            margin-bottom: 10px;
+            line-height: 1.6;
+        }
+
+        .modal-content code {
+            background-color: var(--hover-bg);
+            padding: 2px 5px;
+            border-radius: 4px;
+            font-family: 'Fira Code', monospace;
+        }
+
+        /* The Close Button */
+        .close-button {
+            color: var(--text-color);
+            position: absolute;
+            top: 10px;
+            right: 20px;
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        .close-button:hover,
+        .close-button:focus {
+            color: #ff7810;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        /* Style for the new help button */
+        #install-help-btn i {
+            font-size: 36px;
+            color: var(--text-color);
+            transition: 0.3s ease-in-out;
+        }
+        #install-help-btn:hover i {
+            color: var(--primary-color);
+        }
+    </style>
 </head>
 <body data-theme="light">
     <div class="top-bar">
@@ -88,17 +166,39 @@
         </div>
     </main>
 
+    <!-- Bottom Nav Updated with Tooltips and new Help Button -->
     <section class="bottom-nav">
         <div class="container">
             <ul>
-                <li><a href="https://review.computercenter.in/" target="_blank" rel="nofollow"><img src="images/google-reviews.png" alt=""></a></li>
-                <li><a href="./files/NetworkReset-RunAsAdminstrator.bat" target="_blank" rel="nofollow"><img src="images/network-reset.png" alt=""></a></li>
+                <li><a href="https://review.computercenter.in/" target="_blank" rel="nofollow" title="Review Learn Computer Academy"><img src="images/google-reviews.png" alt="Google Reviews"></a></li>
+                <li><a href="#" id="install-help-btn" title="How to Install Extension"><i class='bx bx-help-circle'></i></a></li>
+                <li><a href="./files/NetworkReset-RunAsAdminstrator.bat" target="_blank" rel="nofollow" title="Network Reset Code for Windows PC"><img src="images/network-reset.png" alt="Network Reset"></a></li>
             </ul>
         </div>
     </section>
+
+    <!-- Theme Toggle Button -->
     <button id="themeToggle" class="theme-toggle">
       <span class="bulb"></span>
     </button>
+
+    <!-- New Installation Guide Modal -->
+    <div id="install-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-button">&times;</span>
+            <h3>How to Install the Chrome Extension</h3>
+            <p>To install this extension for free without using the Chrome Web Store, follow these steps:</p>
+            <ol>
+                <li><strong>Unzip the File:</strong> Once you download the <code>lca-homepage-extension.zip</code> file, you must unzip it. This will create a regular folder. Place this folder somewhere permanent, like your Desktop or Documents folder (if you delete it, the extension will be removed).</li>
+                <li><strong>Open Chrome Extensions:</strong> Open the Google Chrome browser, type <code>chrome://extensions</code> into the address bar, and press Enter.</li>
+                <li><strong>Enable Developer Mode:</strong> In the top-right corner of the extensions page, find the toggle switch for "Developer mode" and turn it <strong>on</strong>.</li>
+                <li><strong>Load the Extension:</strong> Three new buttons will appear. Click the "Load unpacked" button. A file selection window will open.</li>
+                <li><strong>Select the Folder:</strong> Navigate to and select the folder that you unzipped in Step 1. Do not select the <code>.zip</code> file itself.</li>
+            </ol>
+            <p>The extension is now installed! When you open a new tab, you will see the homepage.</p>
+            <p><strong>Note:</strong> Because this extension was not installed from the official store, Chrome will show a warning pop-up each time you start the browser. Simply click the "X" on the pop-up to close it.</p>
+        </div>
+    </div>
 
     <script>
     document.addEventListener("DOMContentLoaded", function () {
@@ -248,12 +348,7 @@
                 weatherTemp.textContent = `${temp}°C`;
 
                 const iconMap = {
-                    0: '01d', // Clear sky
-                    1: '02d', // Mainly clear
-                    2: '03d', // Partly cloudy
-                    3: '04d', // Overcast
-                    61: '10d', // Rain
-                    80: '09d'  // Showers
+                    0: '01d', 1: '02d', 2: '03d', 3: '04d', 61: '10d', 80: '09d'
                 };
                 const iconCode = iconMap[weatherCode] || '01d';
                 weatherIcon.style.backgroundImage = `url(https://openweathermap.org/img/wn/${iconCode}.png)`;
@@ -291,7 +386,6 @@
         setInterval(updateTime, 1000);
 
         // Fetch and populate box-container from JSON
-        // fetch('https://data.computercenter.in/wp-json/custom/v1/homepage')
         fetch('homepage.json')
             .then(response => response.json())
             .then(data => {
@@ -304,6 +398,24 @@
                 });
             })
             .catch(error => console.error('Error fetching box-container JSON:', error));
+            
+        // New Modal Logic
+        const modal = document.getElementById("install-modal");
+        const btn = document.getElementById("install-help-btn");
+        const span = document.getElementsByClassName("close-button")[0];
+
+        btn.onclick = function(e) {
+            e.preventDefault(); // Prevent the link from navigating
+            modal.style.display = "block";
+        }
+        span.onclick = function() {
+            modal.style.display = "none";
+        }
+        window.onclick = function(event) {
+            if (event.target == modal) {
+                modal.style.display = "none";
+            }
+        }
     });
 
     // Canvas Grid Background
@@ -345,7 +457,7 @@
     function setTheme(theme) {
         body.dataset.theme = theme;
         themeLogo.src = theme === 'dark' ? themeLogo.dataset.darkSrc : 'images/logo.png';
-        drawGrid();
+        drawGrid(); // Redraw grid on theme change
         localStorage.setItem('themePreference', theme);
     }
 
@@ -354,6 +466,7 @@
         if (savedTheme) {
             setTheme(savedTheme);
         } else {
+            // Default to light theme if nothing is saved
             setTheme('light');
         }
 
