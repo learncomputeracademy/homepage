@@ -673,6 +673,13 @@
                 return '{' + sortedProperties;
             });
         }
+        
+        function removeAllComments(code) {
+             return code.replace(/<!--[\s\S]*?-->/g, '')      // HTML comments
+                       .replace(/\/\*[\s\S]*?\*\//g, '')    // CSS, JS, PHP block comments
+                       .replace(/(?<!:)\/\/[^\r\n]*/g, '') // JS, PHP line comments (avoids URLs)
+                       .replace(/^\s*\n/gm, '');          // Cleanup empty lines
+        }
 
         beautifyBtn.addEventListener('click', () => {
             const lang = langSelect.value;
@@ -700,18 +707,19 @@
         });
 
         minifyBtn.addEventListener('click', () => {
-            const lang = langSelect.value;
             let code = inputEditor.getValue();
             if (!code) return;
+            
+            code = removeAllComments(code);
+
             let minifiedCode = code;
             try {
-                // Minification always removes comments
-                if (lang === 'javascript') {
-                    minifiedCode = code.replace(/\/\*[\s\S]*?\*\/|([^\\:]|^)\/\/.*$/gm, '$1').replace(/\s+/g, ' ');
-                } else if (lang === 'css') {
-                    minifiedCode = code.replace(/\/\*[\s\S]*?\*\/|([^\\:]|^)\/\/.*$/gm, '$1').replace(/\s{2,}/g, ' ').replace(/ ?([{:};,]) ?/g, '$1').trim();
-                } else if (lang === 'htmlmixed' || lang === 'php') {
-                    minifiedCode = code.replace(/<!--[\s\S]*?-->/g, '').replace(/>\s+</g, '><').replace(/\s\s+/g, ' ');
+                if (langSelect.value === 'javascript') {
+                    minifiedCode = code.replace(/\s+/g, ' ');
+                } else if (langSelect.value === 'css') {
+                    minifiedCode = code.replace(/\s{2,}/g, ' ').replace(/ ?([{:};,]) ?/g, '$1').trim();
+                } else if (langSelect.value === 'htmlmixed' || langSelect.value === 'php') {
+                    minifiedCode = code.replace(/>\s+</g, '><').replace(/\s\s+/g, ' ');
                 }
                 outputEditor.setValue(minifiedCode);
             } catch(e) {
@@ -722,12 +730,7 @@
         removeCommentsBtn.addEventListener('click', () => {
             let code = inputEditor.getValue();
             if (!code) return;
-            // Remove HTML, CSS, JS, and PHP comments
-            code = code.replace(/<!--[\s\S]*?-->/g, '')      // HTML
-                       .replace(/\/\*[\s\S]*?\*\//g, '')    // CSS, JS, PHP block
-                       .replace(/\/\/[^\r\n]*/g, '')       // JS, PHP line
-                       .replace(/^\s*\n/gm, '');          // Cleanup empty lines
-            inputEditor.setValue(code);
+            inputEditor.setValue(removeAllComments(code));
         });
 
         copyBtn.addEventListener('click', () => {
