@@ -10,6 +10,8 @@
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
     <!-- Add Fira Code -->
     <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- PrismJS for Syntax Highlighting -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <!-- New Styles for Modal -->
     <style>
@@ -128,24 +130,30 @@
             display: flex;
             flex-direction: column;
             gap: 5px;
+            position: relative;
+            background-color: #2d2d2d;
+            border-radius: 8px;
+            overflow: hidden;
         }
-        .code-tool-body textarea {
+        .code-tool-body pre[class*="language-"] {
             width: 100%;
             height: 100%;
-            resize: none;
-            background-color: var(--hover-bg);
-            color: var(--text-color);
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
+            margin: 0;
             padding: 15px;
             font-family: 'Fira Code', monospace;
             font-size: 14px;
-            transition: box-shadow 0.3s;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            overflow: auto;
         }
-        .code-tool-body textarea:focus {
+         .code-tool-body pre[contenteditable="true"] {
+            -webkit-user-modify: read-write-plaintext-only;
+        }
+        .code-tool-body pre:focus {
             outline: none;
-            box-shadow: 0 0 0 2px var(--primary-color);
+            box-shadow: 0 0 0 2px var(--primary-color) inset;
         }
+
         .code-tool-footer {
             display: flex;
             justify-content: center;
@@ -181,8 +189,9 @@
         .stats-bar {
             font-size: 12px;
             color: #888;
-            padding: 0 5px;
+            padding: 5px 10px;
             text-align: right;
+            background-color: #252525;
         }
         .swap-pane {
             display: flex;
@@ -329,28 +338,28 @@
             <span class="close-button">&times;</span>
             <div class="code-tool-container">
                 <div class="code-tool-header">
-                    <h3><i class='bx bx-code-curly' style="vertical-align: middle;"></i> Code Minifier & Beautifier</h3>
+                    <h3><i class='bx bx-code-curly' style="vertical-align: middle;"></i> Code Tool</h3>
                      <div class="code-tool-controls">
                         <button id="upload-btn"><i class='bx bx-upload'></i> Upload File</button>
                         <input type="file" id="file-input" style="display: none;">
                         <select id="code-language-select">
                             <option value="html">HTML</option>
                             <option value="css">CSS</option>
-                            <option value="js">JavaScript</option>
-                            <option value="php">PHP (Beta)</option>
+                            <option value="javascript">JavaScript</option>
+                            <option value="php">PHP</option>
                         </select>
                     </div>
                 </div>
                 <div class="code-tool-body">
                     <div class="code-pane">
-                        <textarea id="code-input" placeholder="Paste your code here or upload a file..."></textarea>
+                        <pre id="code-input-pre" contenteditable="true" class="language-html" spellcheck="false"><code></code></pre>
                         <div id="input-stats" class="stats-bar">Chars: 0 | Lines: 0</div>
                     </div>
                     <div class="swap-pane">
                         <button id="swap-btn" title="Swap Panes"><i class='bx bx-transfer-alt'></i></button>
                     </div>
                     <div class="code-pane">
-                        <textarea id="code-output" placeholder="Result will appear here..." readonly></textarea>
+                        <pre id="code-output-pre" class="language-html"><code></code></pre>
                         <div id="output-stats" class="stats-bar">Chars: 0 | Lines: 0</div>
                     </div>
                 </div>
@@ -595,8 +604,11 @@
         }
 
         // --- Code Tool Functionality ---
-        const codeInput = document.getElementById('code-input');
-        const codeOutput = document.getElementById('code-output');
+        const codeInputPre = document.getElementById('code-input-pre');
+        const codeOutputPre = document.getElementById('code-output-pre');
+        const codeInput = codeInputPre.querySelector('code');
+        const codeOutput = codeOutputPre.querySelector('code');
+
         const beautifyBtn = document.getElementById('beautify-btn');
         const minifyBtn = document.getElementById('minify-btn');
         const copyBtn = document.getElementById('copy-btn');
@@ -607,72 +619,74 @@
         const fileInput = document.getElementById('file-input');
         const inputStats = document.getElementById('input-stats');
         const outputStats = document.getElementById('output-stats');
-
-        const updateStats = (textarea, statsEl) => {
-            const text = textarea.value;
+        
+        const updateStats = (element, statsEl) => {
+            const text = element.textContent;
             const charCount = text.length;
             const lineCount = text.split('\n').length;
             statsEl.textContent = `Chars: ${charCount} | Lines: ${lineCount}`;
         };
 
-        codeInput.addEventListener('input', () => updateStats(codeInput, inputStats));
-        codeOutput.addEventListener('input', () => updateStats(codeOutput, outputStats));
+        const highlight = (element) => {
+            Prism.highlightElement(element);
+            updateStats(element, element.parentElement.nextElementSibling);
+        };
+
+        codeInputPre.addEventListener('input', () => updateStats(codeInput, inputStats));
         
+        langSelect.addEventListener('change', () => {
+            const lang = langSelect.value;
+            codeInputPre.className = `language-${lang}`;
+            codeOutputPre.className = `language-${lang}`;
+            highlight(codeInput);
+            highlight(codeOutput);
+        });
+
         beautifyBtn.addEventListener('click', () => {
             const lang = langSelect.value;
-            const code = codeInput.value;
+            const code = codeInput.textContent;
             if (!code) return;
             let beautifiedCode = '';
             try {
-                const options = {
-                    indent_size: 2,
-                    space_in_empty_paren: true,
-                    // These options help format JS and CSS inside HTML
-                    indent_scripts: 'normal', 
-                    indent_inner_html: true
-                };
-                if (lang === 'js') {
+                const options = { indent_size: 2, space_in_empty_paren: true, indent_scripts: 'normal', indent_inner_html: true };
+                if (lang === 'javascript') {
                     beautifiedCode = js_beautify(code, options);
                 } else if (lang === 'html' || lang === 'php') {
-                    // Treat PHP as HTML for beautification of non-PHP parts.
                     beautifiedCode = html_beautify(code, options);
                 } else if (lang === 'css') {
                     beautifiedCode = css_beautify(code, options);
                 }
-                codeOutput.value = beautifiedCode;
+                codeOutput.textContent = beautifiedCode;
+                highlight(codeOutput);
             } catch(e) {
-                codeOutput.value = "Error beautifying code: " + e.message;
+                codeOutput.textContent = "Error beautifying code: " + e.message;
             }
-            updateStats(codeOutput, outputStats);
         });
 
         minifyBtn.addEventListener('click', () => {
             const lang = langSelect.value;
-            const code = codeInput.value;
+            const code = codeInput.textContent;
             if (!code) return;
             let minifiedCode = code;
             try {
-                if (lang === 'js') {
+                if (lang === 'javascript') {
                     minifiedCode = code.replace(/\/\*[\s\S]*?\*\/|([^\\:]|^)\/\/.*$/gm, '$1').replace(/\s+/g, ' ');
                 } else if (lang === 'css') {
                     minifiedCode = code.replace(/\/\*[\s\S]*?\*\/|([^\\:]|^)\/\/.*$/gm, '$1').replace(/\s{2,}/g, ' ').replace(/ ?([{:};,]) ?/g, '$1').trim();
                 } else if (lang === 'html' || lang === 'php') {
-                    // A more robust HTML minification
-                    minifiedCode = code
-                        .replace(/<!--[\s\S]*?-->/g, '') // Remove comments
-                        .replace(/>\s+</g, '><')       // Remove whitespace between tags
-                        .replace(/\s+/g, ' ');          // Collapse whitespace
+                    minifiedCode = code.replace(/<!--[\s\S]*?-->/g, '').replace(/>\s+</g, '><').replace(/\s+/g, ' ');
                 }
-                codeOutput.value = minifiedCode;
+                codeOutput.textContent = minifiedCode;
+                highlight(codeOutput);
             } catch(e) {
-                codeOutput.value = "Error minifying code: " + e.message;
+                codeOutput.textContent = "Error minifying code: " + e.message;
             }
-            updateStats(codeOutput, outputStats);
         });
         
         copyBtn.addEventListener('click', () => {
-            if (!codeOutput.value) return;
-            navigator.clipboard.writeText(codeOutput.value).then(() => {
+            const codeToCopy = codeOutput.textContent;
+            if (!codeToCopy) return;
+            navigator.clipboard.writeText(codeToCopy).then(() => {
                 const originalText = copyBtn.innerHTML;
                 copyBtn.innerHTML = "<i class='bx bx-check'></i> Copied!";
                 setTimeout(() => { copyBtn.innerHTML = originalText; }, 2000);
@@ -680,18 +694,18 @@
         });
 
         clearBtn.addEventListener('click', () => {
-            codeInput.value = '';
-            codeOutput.value = '';
+            codeInput.textContent = '';
+            codeOutput.textContent = '';
             updateStats(codeInput, inputStats);
             updateStats(codeOutput, outputStats);
         });
 
         swapBtn.addEventListener('click', () => {
-            const temp = codeInput.value;
-            codeInput.value = codeOutput.value;
-            codeOutput.value = temp;
-            updateStats(codeInput, inputStats);
-            updateStats(codeOutput, outputStats);
+            const temp = codeInput.textContent;
+            codeInput.textContent = codeOutput.textContent;
+            codeOutput.textContent = temp;
+            highlight(codeInput);
+            highlight(codeOutput);
         });
 
         uploadBtn.addEventListener('click', () => fileInput.click());
@@ -700,13 +714,12 @@
             if (file) {
                 const reader = new FileReader();
                 reader.onload = (e) => {
-                    codeInput.value = e.target.result;
-                    updateStats(codeInput, inputStats);
+                    codeInput.textContent = e.target.result;
+                    highlight(codeInput);
                 };
                 reader.readAsText(file);
             }
         });
-
     });
 
     // Canvas Grid Background
@@ -773,6 +786,15 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/js-beautify/1.14.0/beautify.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/js-beautify/1.14.0/beautify-css.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/js-beautify/1.14.0/beautify-html.min.js"></script>
+    
+    <!-- PrismJS Core and Languages -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-core.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-clike.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-javascript.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-css.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-markup.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-php.min.js"></script>
 
 
     <script>
