@@ -352,7 +352,6 @@
                     </div>
                 </div>
                 <div class="code-tool-options">
-                    <label><input type="checkbox" id="option-remove-comments"> Remove Comments (Beautify)</label>
                     <label id="option-sort-css-label" style="display:none;"><input type="checkbox" id="option-sort-css"> Sort CSS Properties</label>
                 </div>
                 <div class="code-tool-body">
@@ -371,6 +370,7 @@
                 <div class="code-tool-footer">
                     <button id="beautify-btn"><i class='bx bxs-magic-wand'></i> Beautify</button>
                     <button id="minify-btn"><i class='bx bx-unite'></i> Minify</button>
+                    <button id="remove-comments-btn"><i class='bx bx-comment-x'></i> Remove Comments</button>
                     <button id="copy-btn"><i class='bx bx-copy'></i> Copy Result</button>
                     <button id="clear-btn"><i class='bx bx-trash'></i> Clear</button>
                 </div>
@@ -632,6 +632,7 @@
 
         const beautifyBtn = document.getElementById('beautify-btn');
         const minifyBtn = document.getElementById('minify-btn');
+        const removeCommentsBtn = document.getElementById('remove-comments-btn');
         const copyBtn = document.getElementById('copy-btn');
         const clearBtn = document.getElementById('clear-btn');
         const langSelect = document.getElementById('code-language-select');
@@ -640,7 +641,6 @@
         const fileInput = document.getElementById('file-input');
         const inputStats = document.getElementById('input-stats');
         const outputStats = document.getElementById('output-stats');
-        const removeCommentsCheckbox = document.getElementById('option-remove-comments');
         const sortCssCheckbox = document.getElementById('option-sort-css');
         const sortCssLabel = document.getElementById('option-sort-css-label');
         
@@ -678,14 +678,6 @@
             const lang = langSelect.value;
             let code = inputEditor.getValue();
             if (!code) return;
-
-            if (removeCommentsCheckbox.checked) {
-                if (lang === 'css') {
-                    code = code.replace(/\/\*[\s\S]*?\*\/|([^\\:]|^)\/\/.*$/gm, '');
-                } else { // HTML, JS, PHP
-                    code = code.replace(/<!--[\s\S]*?-->/g, '').replace(/\/\*[\s\S]*?\*\/|([^\\:]|^)\/\/.*$/gm, '');
-                }
-            }
 
             if (lang === 'css' && sortCssCheckbox.checked) {
                 code = sortCssProperties(code);
@@ -727,6 +719,17 @@
             }
         });
         
+        removeCommentsBtn.addEventListener('click', () => {
+            let code = inputEditor.getValue();
+            if (!code) return;
+            // Remove HTML, CSS, JS, and PHP comments
+            code = code.replace(/<!--[\s\S]*?-->/g, '')      // HTML
+                       .replace(/\/\*[\s\S]*?\*\//g, '')    // CSS, JS, PHP block
+                       .replace(/\/\/[^\r\n]*/g, '')       // JS, PHP line
+                       .replace(/^\s*\n/gm, '');          // Cleanup empty lines
+            inputEditor.setValue(code);
+        });
+
         copyBtn.addEventListener('click', () => {
             const codeToCopy = outputEditor.getValue();
             if (!codeToCopy) return;
