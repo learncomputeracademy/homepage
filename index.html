@@ -122,7 +122,7 @@
             gap: 15px;
         }
         .code-tool-options {
-            display: flex;
+            display: none; /* Hide by default */
             gap: 20px;
             align-items: center;
             padding: 10px;
@@ -352,7 +352,7 @@
                     </div>
                 </div>
                 <div class="code-tool-options">
-                    <label id="option-sort-css-label" style="display:none;"><input type="checkbox" id="option-sort-css"> Sort CSS Properties</label>
+                    <label><input type="checkbox" id="option-sort-css"> Sort CSS Properties</label>
                 </div>
                 <div class="code-tool-body">
                     <div class="code-pane">
@@ -642,7 +642,7 @@
         const inputStats = document.getElementById('input-stats');
         const outputStats = document.getElementById('output-stats');
         const sortCssCheckbox = document.getElementById('option-sort-css');
-        const sortCssLabel = document.getElementById('option-sort-css-label');
+        const optionsContainer = document.querySelector('.code-tool-options');
         
         const updateStats = (editor, statsEl) => {
             const text = editor.getValue();
@@ -658,7 +658,11 @@
             const lang = langSelect.value;
             inputEditor.setOption('mode', lang);
             outputEditor.setOption('mode', lang);
-            sortCssLabel.style.display = lang === 'css' ? 'flex' : 'none';
+            if (lang === 'css') {
+                optionsContainer.style.display = 'flex';
+            } else {
+                optionsContainer.style.display = 'none';
+            }
         });
 
         function sortCssProperties(cssText) {
