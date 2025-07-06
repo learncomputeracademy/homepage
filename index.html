@@ -24,6 +24,7 @@
             height: 100%;
             overflow: auto; /* Enable scroll if needed */
             background-color: rgba(0,0,0,0.6); /* Black w/ opacity */
+            backdrop-filter: blur(5px);
         }
 
         /* Modal Content */
@@ -66,10 +67,11 @@
         .close-button {
             color: var(--text-color);
             position: absolute;
-            top: 10px;
-            right: 20px;
-            font-size: 28px;
+            top: 15px;
+            right: 25px;
+            font-size: 32px;
             font-weight: bold;
+            z-index: 10;
         }
 
         .close-button:hover,
@@ -92,7 +94,8 @@
         /* Styles for Code Tool Modal */
         #code-tool-modal .modal-content {
             max-width: 90%;
-            width: 1200px;
+            width: 1400px;
+            padding: 30px;
         }
         .code-tool-container {
             display: flex;
@@ -103,15 +106,28 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
+            padding-bottom: 15px;
+            border-bottom: 1px solid var(--border-color);
         }
         .code-tool-header h3 {
             margin: 0;
+            font-size: 24px;
+        }
+        .code-tool-controls {
+            display: flex;
+            align-items: center;
+            gap: 15px;
         }
         .code-tool-body {
             display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 15px;
-            height: 60vh;
+            grid-template-columns: 1fr 40px 1fr;
+            gap: 10px;
+            height: 65vh;
+        }
+        .code-pane {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
         }
         .code-tool-body textarea {
             width: 100%;
@@ -120,35 +136,77 @@
             background-color: var(--hover-bg);
             color: var(--text-color);
             border: 1px solid var(--border-color);
-            border-radius: 5px;
-            padding: 10px;
+            border-radius: 8px;
+            padding: 15px;
             font-family: 'Fira Code', monospace;
             font-size: 14px;
+            transition: box-shadow 0.3s;
+        }
+        .code-tool-body textarea:focus {
+            outline: none;
+            box-shadow: 0 0 0 2px var(--primary-color);
         }
         .code-tool-footer {
             display: flex;
             justify-content: center;
             gap: 10px;
+            padding-top: 15px;
+            border-top: 1px solid var(--border-color);
         }
-        .code-tool-footer button {
+        .code-tool-footer button, .code-tool-controls button {
             padding: 10px 20px;
-            border: none;
+            border: 1px solid var(--border-color);
             border-radius: 5px;
-            background-color: var(--primary-color);
-            color: white;
+            background-color: transparent;
+            color: var(--text-color);
             cursor: pointer;
             font-size: 16px;
-            transition: background-color 0.3s;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
-        .code-tool-footer button:hover {
-            background-color: #e66a00;
+        .code-tool-footer button:hover, .code-tool-controls button:hover {
+            background-color: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
         }
-        .code-tool-footer select {
+        .code-tool-controls select {
             padding: 10px;
             border-radius: 5px;
             border: 1px solid var(--border-color);
             background-color: var(--bg-color);
             color: var(--text-color);
+        }
+        .stats-bar {
+            font-size: 12px;
+            color: #888;
+            padding: 0 5px;
+            text-align: right;
+        }
+        .swap-pane {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        #swap-btn {
+            background: var(--hover-bg);
+            border: 1px solid var(--border-color);
+            color: var(--text-color);
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        #swap-btn:hover {
+            transform: rotate(180deg);
+            background-color: var(--primary-color);
+            color: white;
         }
 
     </style>
@@ -271,23 +329,36 @@
             <span class="close-button">&times;</span>
             <div class="code-tool-container">
                 <div class="code-tool-header">
-                    <h3>Code Minifier & Beautifier</h3>
-                    <select id="code-language-select">
-                        <option value="html">HTML</option>
-                        <option value="css">CSS</option>
-                        <option value="js">JavaScript</option>
-                        <option value="php">PHP</option>
-                    </select>
+                    <h3><i class='bx bx-code-curly' style="vertical-align: middle;"></i> Code Tool</h3>
+                     <div class="code-tool-controls">
+                        <button id="upload-btn"><i class='bx bx-upload'></i> Upload File</button>
+                        <input type="file" id="file-input" style="display: none;">
+                        <select id="code-language-select">
+                            <option value="html">HTML</option>
+                            <option value="css">CSS</option>
+                            <option value="js">JavaScript</option>
+                            <option value="php">PHP (Beta)</option>
+                        </select>
+                    </div>
                 </div>
                 <div class="code-tool-body">
-                    <textarea id="code-input" placeholder="Paste your code here..."></textarea>
-                    <textarea id="code-output" placeholder="Result will appear here..." readonly></textarea>
+                    <div class="code-pane">
+                        <textarea id="code-input" placeholder="Paste your code here or upload a file..."></textarea>
+                        <div id="input-stats" class="stats-bar">Chars: 0 | Lines: 0</div>
+                    </div>
+                    <div class="swap-pane">
+                        <button id="swap-btn" title="Swap Panes"><i class='bx bx-transfer-alt'></i></button>
+                    </div>
+                    <div class="code-pane">
+                        <textarea id="code-output" placeholder="Result will appear here..." readonly></textarea>
+                        <div id="output-stats" class="stats-bar">Chars: 0 | Lines: 0</div>
+                    </div>
                 </div>
                 <div class="code-tool-footer">
-                    <button id="beautify-btn">Beautify</button>
-                    <button id="minify-btn">Minify</button>
-                    <button id="copy-btn">Copy Result</button>
-                    <button id="clear-btn">Clear</button>
+                    <button id="beautify-btn"><i class='bx bxs-magic-wand'></i> Beautify</button>
+                    <button id="minify-btn"><i class='bx bx-unite'></i> Minify</button>
+                    <button id="copy-btn"><i class='bx bx-copy'></i> Copy Result</button>
+                    <button id="clear-btn"><i class='bx bx-trash'></i> Clear</button>
                 </div>
             </div>
         </div>
@@ -493,20 +564,19 @@
             })
             .catch(error => console.error('Error fetching box-container JSON:', error));
             
-        // New Modal Logic
+        // Modal Logic
         const installModal = document.getElementById("install-modal");
         const installBtn = document.getElementById("install-help-btn");
         const installCloseBtn = installModal.querySelector(".close-button");
 
         installBtn.onclick = function(e) {
-            e.preventDefault(); // Prevent the link from navigating
+            e.preventDefault();
             installModal.style.display = "block";
         }
         installCloseBtn.onclick = function() {
             installModal.style.display = "none";
         }
 
-        // Code Tool Modal Logic
         const codeToolModal = document.getElementById("code-tool-modal");
         const codeToolBtn = document.getElementById("code-tool-btn");
         const codeToolCloseBtn = codeToolModal.querySelector(".close-button");
@@ -519,17 +589,12 @@
             codeToolModal.style.display = "none";
         }
 
-        // Close modals on outside click
         window.onclick = function(event) {
-            if (event.target == installModal) {
-                installModal.style.display = "none";
-            }
-            if (event.target == codeToolModal) {
-                codeToolModal.style.display = "none";
-            }
+            if (event.target == installModal) installModal.style.display = "none";
+            if (event.target == codeToolModal) codeToolModal.style.display = "none";
         }
 
-        // Code Tool Functionality
+        // --- Code Tool Functionality ---
         const codeInput = document.getElementById('code-input');
         const codeOutput = document.getElementById('code-output');
         const beautifyBtn = document.getElementById('beautify-btn');
@@ -537,28 +602,48 @@
         const copyBtn = document.getElementById('copy-btn');
         const clearBtn = document.getElementById('clear-btn');
         const langSelect = document.getElementById('code-language-select');
+        const swapBtn = document.getElementById('swap-btn');
+        const uploadBtn = document.getElementById('upload-btn');
+        const fileInput = document.getElementById('file-input');
+        const inputStats = document.getElementById('input-stats');
+        const outputStats = document.getElementById('output-stats');
 
+        const updateStats = (textarea, statsEl) => {
+            const text = textarea.value;
+            const charCount = text.length;
+            const lineCount = text.split('\n').length;
+            statsEl.textContent = `Chars: ${charCount} | Lines: ${lineCount}`;
+        };
+
+        codeInput.addEventListener('input', () => updateStats(codeInput, inputStats));
+        codeOutput.addEventListener('input', () => updateStats(codeOutput, outputStats));
+        
         beautifyBtn.addEventListener('click', () => {
             const lang = langSelect.value;
             const code = codeInput.value;
             if (!code) return;
-            // Basic beautify logic, can be replaced with a library for more complex formatting
-            let beautifiedCode = code;
-            if (lang === 'js' || lang === 'json') {
-                try {
-                    beautifiedCode = JSON.stringify(JSON.parse(code), null, 4);
-                } catch (e) {
-                    // Fallback for non-JSON JS
-                    beautifiedCode = js_beautify(code, { indent_size: 4, space_in_empty_paren: true });
+            let beautifiedCode = '';
+            try {
+                const options = {
+                    indent_size: 2,
+                    space_in_empty_paren: true,
+                    // These options help format JS and CSS inside HTML
+                    indent_scripts: 'normal', 
+                    indent_inner_html: true
+                };
+                if (lang === 'js') {
+                    beautifiedCode = js_beautify(code, options);
+                } else if (lang === 'html' || lang === 'php') {
+                    // Treat PHP as HTML for beautification of non-PHP parts.
+                    beautifiedCode = html_beautify(code, options);
+                } else if (lang === 'css') {
+                    beautifiedCode = css_beautify(code, options);
                 }
-            } else if (lang === 'html') {
-                beautifiedCode = html_beautify(code, { indent_size: 2, space_in_empty_paren: true });
-            } else if (lang === 'css') {
-                beautifiedCode = css_beautify(code, { indent_size: 2 });
-            } else { //php
-                 beautifiedCode = code.replace(/;/g, ';\n').replace(/{/g, '{\n').replace(/}/g, '\n}\n');
+                codeOutput.value = beautifiedCode;
+            } catch(e) {
+                codeOutput.value = "Error beautifying code: " + e.message;
             }
-            codeOutput.value = beautifiedCode;
+            updateStats(codeOutput, outputStats);
         });
 
         minifyBtn.addEventListener('click', () => {
@@ -566,36 +651,60 @@
             const code = codeInput.value;
             if (!code) return;
             let minifiedCode = code;
-            if (lang === 'js') {
-                minifiedCode = code.replace(/\/\*[\s\S]*?\*\/|([^\\:]|^)\/\/.*$/gm, '$1') // remove comments
-                                   .replace(/\s+/g, ' '); // remove whitespace
-            } else if (lang === 'css') {
-                minifiedCode = code.replace(/\/\*[\s\S]*?\*\/|([^\\:]|^)\/\/.*$/gm, '$1') // remove comments
-                                   .replace(/\s+/g, ' ') // remove whitespace
-                                   .replace(/ ?([{:};,]) ?/g, '$1');
-            } else if (lang === 'html') {
-                minifiedCode = code.replace(/<!--[\s\S]*?-->/g, '') // remove comments
-                                   .replace(/>\s+</g, '><') // remove whitespace between tags
-                                   .replace(/\s{2,}/g, ' '); // collapse whitespace
-            } else if (lang === 'php') {
-                 minifiedCode = code.replace(/(\/\*[\s\S]*?\*\/|\/\/.*$)/gm, '') // remove comments
-                                   .replace(/\s*(<\?php|\?>)\s*/g, '$1') // trim whitespace around php tags
-                                   .replace(/\s+/g, ' '); // collapse whitespace
+            try {
+                if (lang === 'js') {
+                    minifiedCode = code.replace(/\/\*[\s\S]*?\*\/|([^\\:]|^)\/\/.*$/gm, '$1').replace(/\s+/g, ' ');
+                } else if (lang === 'css') {
+                    minifiedCode = code.replace(/\/\*[\s\S]*?\*\/|([^\\:]|^)\/\/.*$/gm, '$1').replace(/\s{2,}/g, ' ').replace(/ ?([{:};,]) ?/g, '$1').trim();
+                } else if (lang === 'html' || lang === 'php') {
+                    // A more robust HTML minification
+                    minifiedCode = code
+                        .replace(/<!--[\s\S]*?-->/g, '') // Remove comments
+                        .replace(/>\s+</g, '><')       // Remove whitespace between tags
+                        .replace(/\s+/g, ' ');          // Collapse whitespace
+                }
+                codeOutput.value = minifiedCode;
+            } catch(e) {
+                codeOutput.value = "Error minifying code: " + e.message;
             }
-            codeOutput.value = minifiedCode;
+            updateStats(codeOutput, outputStats);
         });
-
+        
         copyBtn.addEventListener('click', () => {
             if (!codeOutput.value) return;
-            codeOutput.select();
-            document.execCommand('copy');
-            copyBtn.textContent = 'Copied!';
-            setTimeout(() => { copyBtn.textContent = 'Copy Result'; }, 2000);
+            navigator.clipboard.writeText(codeOutput.value).then(() => {
+                const originalText = copyBtn.innerHTML;
+                copyBtn.innerHTML = "<i class='bx bx-check'></i> Copied!";
+                setTimeout(() => { copyBtn.innerHTML = originalText; }, 2000);
+            });
         });
 
         clearBtn.addEventListener('click', () => {
             codeInput.value = '';
             codeOutput.value = '';
+            updateStats(codeInput, inputStats);
+            updateStats(codeOutput, outputStats);
+        });
+
+        swapBtn.addEventListener('click', () => {
+            const temp = codeInput.value;
+            codeInput.value = codeOutput.value;
+            codeOutput.value = temp;
+            updateStats(codeInput, inputStats);
+            updateStats(codeOutput, outputStats);
+        });
+
+        uploadBtn.addEventListener('click', () => fileInput.click());
+        fileInput.addEventListener('change', (event) => {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    codeInput.value = e.target.result;
+                    updateStats(codeInput, inputStats);
+                };
+                reader.readAsText(file);
+            }
         });
 
     });
