@@ -8,31 +8,50 @@
     <link rel="icon" type="image/x-icon" href="https://www.google.com/s2/favicons?sz=64&domain_url=learncomputer.in">
     <link href="css/style.css" type="text/css" rel="stylesheet">
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
-    <!-- Add Fira Code -->
     <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     
-    <!-- CodeMirror for Syntax Highlighting Editor -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.15/codemirror.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.15/theme/monokai.min.css">
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-    <!-- New Styles for Modal -->
+    
     <style>
-        /* Styles for the installation guide popup */
+        :root {
+            --bg-color: #ffffff;
+            --text-color: #000000;
+            --border-color: #dddddd;
+            --primary-color: #ff7810;
+            --hover-bg: #f0f0f0;
+            --shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+
+        body[data-theme="dark"] {
+            --bg-color: #1a1a1a;
+            --text-color: #ffffff;
+            --border-color: #444444;
+            --hover-bg: #333333;
+            --shadow: 0 4px 8px rgba(0,0,0,0.3);
+        }
+        
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+        }
+
+        /* General Modal Styles */
         .modal {
-            display: none; /* Hidden by default */
-            position: fixed; /* Stay in place */
-            z-index: 2000; /* Sit on top */
+            display: none; 
+            position: fixed; 
+            z-index: 2000; 
             left: 0;
             top: 0;
             width: 100%;
             height: 100%;
-            overflow: auto; /* Enable scroll if needed */
-            background-color: rgba(0,0,0,0.6); /* Black w/ opacity */
+            overflow: auto; 
+            background-color: rgba(0,0,0,0.6); 
             backdrop-filter: blur(5px);
         }
 
-        /* Modal Content */
         .modal-content {
             background-color: var(--bg-color);
             color: var(--text-color);
@@ -44,7 +63,7 @@
             border-radius: 10px;
             box-shadow: var(--shadow);
             position: relative;
-            font-family: sans-serif; /* Use a more readable font for instructions */
+            font-family: sans-serif;
         }
         
         .modal-content h3 {
@@ -52,23 +71,6 @@
             color: var(--primary-color);
         }
 
-        .modal-content ol {
-            padding-left: 20px;
-        }
-
-        .modal-content li {
-            margin-bottom: 10px;
-            line-height: 1.6;
-        }
-
-        .modal-content code:not([class*="language-"]) {
-            background-color: var(--hover-bg);
-            padding: 2px 5px;
-            border-radius: 4px;
-            font-family: 'Fira Code', monospace;
-        }
-
-        /* The Close Button */
         .close-button {
             color: var(--text-color);
             position: absolute;
@@ -85,14 +87,14 @@
             text-decoration: none;
             cursor: pointer;
         }
-
-        /* Style for the new help button */
-        #install-help-btn i, #code-tool-btn i {
+        
+        /* Styles for bottom nav icons */
+        .bottom-nav i {
             font-size: 36px;
             color: var(--text-color);
             transition: 0.3s ease-in-out;
         }
-        #install-help-btn:hover i, #code-tool-btn:hover i {
+        .bottom-nav a:hover i {
             color: var(--primary-color);
         }
 
@@ -100,135 +102,98 @@
         #code-tool-modal .modal-content {
             max-width: 90%;
             width: 1400px;
-            padding: 20px;
         }
-        .code-tool-container {
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-        }
-        .code-tool-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        .code-tool-header h3 {
-            margin: 0;
-            font-size: 24px;
-        }
-        .code-tool-controls {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-        }
-        .code-tool-options {
-            display: none; /* Hide by default */
-            gap: 20px;
-            align-items: center;
-            padding: 10px;
-            background: var(--hover-bg);
-            border-radius: 6px;
-        }
-        .code-tool-options label {
-            display: flex;
-            align-items: center;
-            gap: 5px;
-            cursor: pointer;
-        }
-        .code-tool-body {
-            display: grid;
-            grid-template-columns: 1fr 40px 1fr;
-            gap: 10px;
-            height: 65vh;
-        }
-        .code-pane {
-            border-radius: 8px;
-            overflow: hidden;
-            display: flex;
-            flex-direction: column;
+        .code-tool-container { display: flex; flex-direction: column; gap: 15px; }
+        .code-tool-header { display: flex; justify-content: space-between; align-items: center; }
+        .code-tool-header h3 { margin: 0; font-size: 24px; }
+        .code-tool-controls { display: flex; align-items: center; gap: 15px; }
+        .code-tool-options { display: none; gap: 20px; align-items: center; padding: 10px; background: var(--hover-bg); border-radius: 6px; }
+        .code-tool-options label { display: flex; align-items: center; gap: 5px; cursor: pointer; }
+        .code-tool-body { display: grid; grid-template-columns: 1fr 40px 1fr; gap: 10px; height: 65vh; }
+        .code-pane { border-radius: 8px; overflow: hidden; display: flex; flex-direction: column; border: 1px solid var(--border-color); }
+        .CodeMirror { flex-grow: 1; height: auto; font-family: 'Fira Code', monospace; font-size: 14px; }
+        .code-tool-footer { display: flex; justify-content: center; gap: 10px; padding-top: 15px; border-top: 1px solid var(--border-color); }
+        .code-tool-footer button, .code-tool-controls button { padding: 10px 20px; border: 1px solid var(--border-color); border-radius: 5px; background-color: transparent; color: var(--text-color); cursor: pointer; font-size: 16px; transition: all 0.3s; display: flex; align-items: center; gap: 8px; }
+        .code-tool-footer button:hover, .code-tool-controls button:hover { background-color: var(--primary-color); color: white; border-color: var(--primary-color); }
+        .code-tool-controls select { padding: 10px; border-radius: 5px; border: 1px solid var(--border-color); background-color: var(--bg-color); color: var(--text-color); }
+        .stats-bar { font-size: 12px; color: #aaa; padding: 5px 10px; text-align: right; background-color: #272822; border-top: 1px solid #444; }
+        .swap-pane { display: flex; align-items: center; justify-content: center; }
+        #swap-btn { background: var(--hover-bg); border: 1px solid var(--border-color); color: var(--text-color); width: 40px; height: 40px; border-radius: 50%; cursor: pointer; transition: all 0.3s; font-size: 20px; display: flex; align-items: center; justify-content: center; }
+        #swap-btn:hover { transform: rotate(180deg); background-color: var(--primary-color); color: white; }
+
+        /* Styles for Settings Modal */
+        #settings-modal .modal-content { max-width: 700px; }
+        .settings-container { display: flex; flex-direction: column; gap: 20px; }
+        .settings-tabs { display: flex; border-bottom: 1px solid var(--border-color); }
+        .settings-tab { padding: 10px 20px; cursor: pointer; border-bottom: 3px solid transparent; margin-bottom: -1px; color: var(--text-color); }
+        .settings-tab.active { color: var(--primary-color); border-bottom-color: var(--primary-color); }
+        .settings-pane { display: none; padding: 15px 5px; animation: fadeIn 0.5s; }
+        .settings-pane.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        
+        /* General Form Group Styles */
+        .form-group { margin-bottom: 15px; }
+        .form-group label { display: block; margin-bottom: 5px; font-weight: bold; }
+        .form-group input[type="text"],
+        .form-group input[type="url"],
+        .form-group input[type="color"],
+        .form-group input[type="file"] {
+            width: 100%;
+            padding: 8px;
+            border-radius: 5px;
             border: 1px solid var(--border-color);
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            box-sizing: border-box;
         }
-        .CodeMirror {
-            flex-grow: 1;
-            height: auto;
-            font-family: 'Fira Code', monospace;
-            font-size: 14px;
-        }
-        .code-tool-footer {
-            display: flex;
-            justify-content: center;
-            gap: 10px;
-            padding-top: 15px;
-            border-top: 1px solid var(--border-color);
-        }
-        .code-tool-footer button, .code-tool-controls button {
-            padding: 10px 20px;
+        .form-group .color-inputs { display: flex; gap: 10px; align-items: center; }
+        .form-group .image-note { font-size: 12px; opacity: 0.7; margin-top: 5px; }
+
+        /* Bookmark Editor List Styles */
+        #bookmark-editor-list { list-style: none; padding: 0; max-height: 300px; overflow-y: auto; }
+        #bookmark-editor-list li { display: flex; align-items: center; gap: 10px; padding: 10px; border: 1px solid var(--border-color); border-radius: 5px; margin-bottom: 8px; cursor: grab; background-color: var(--bg-color); }
+        #bookmark-editor-list li.dragging { opacity: 0.5; background: var(--hover-bg); }
+        #bookmark-editor-list img { width: 24px; height: 24px; object-fit: contain; }
+        #bookmark-editor-list .bookmark-info { flex-grow: 1; }
+        #bookmark-editor-list .bookmark-actions button { background: none; border: none; color: var(--text-color); cursor: pointer; font-size: 18px; padding: 2px 5px; }
+        #bookmark-editor-list .bookmark-actions button:hover { color: var(--primary-color); }
+
+        /* General Button Styles */
+        .settings-btn, .settings-pane button, label.settings-btn, .form-button {
+            padding: 10px 15px;
             border: 1px solid var(--border-color);
             border-radius: 5px;
             background-color: transparent;
             color: var(--text-color);
             cursor: pointer;
-            font-size: 16px;
             transition: all 0.3s;
-            display: flex;
-            align-items: center;
-            gap: 8px;
+            display: inline-block;
+            text-align: center;
         }
-        .code-tool-footer button:hover, .code-tool-controls button:hover {
+        .settings-btn:hover, .settings-pane button:hover, label.settings-btn:hover, .form-button:hover {
             background-color: var(--primary-color);
             color: white;
             border-color: var(--primary-color);
         }
-        .code-tool-controls select {
-            padding: 10px;
-            border-radius: 5px;
-            border: 1px solid var(--border-color);
-            background-color: var(--bg-color);
-            color: var(--text-color);
-        }
-        .stats-bar {
-            font-size: 12px;
-            color: #aaa;
-            padding: 5px 10px;
-            text-align: right;
-            background-color: #272822; /* Monokai background color */
-            border-top: 1px solid #444;
-        }
-        .swap-pane {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        #swap-btn {
-            background: var(--hover-bg);
-            border: 1px solid var(--border-color);
-            color: var(--text-color);
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            cursor: pointer;
-            transition: all 0.3s;
-            font-size: 20px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        #swap-btn:hover {
-            transform: rotate(180deg);
-            background-color: var(--primary-color);
-            color: white;
-        }
 
+        /* Styles for new Bookmark Form Modal */
+        #bookmark-form-modal .modal-content { max-width: 500px; }
+        #bookmark-image-preview {
+            max-width: 98px;
+            max-height: 34px;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            margin-top: 10px;
+            object-fit: contain;
+        }
+        
     </style>
 </head>
 <body data-theme="light">
+    <!-- Top Bar -->
     <div class="top-bar">
-        <div class="weather-info">
-            <span class="weather-icon"></span>
-            <span class="weather-temp"></span>
-        </div>
-        <div class="time-info">
-            <span class="time-display"></span>
+        <div class="weather-info"><span class="weather-icon"></span><span class="weather-temp"></span></div>
+        <div class="time-info"><span class="time-display"></span>
             <svg class="time-icon" width="24" height="24" viewBox="0 0 24 24">
                 <circle cx="12" cy="12" r="10" fill="none" stroke="var(--text-color)" stroke-width="2"/>
                 <line id="hourHand" x1="12" y1="12" x2="12" y2="6" stroke="var(--text-color)" stroke-width="2" stroke-linecap="round"/>
@@ -237,7 +202,11 @@
             </svg>
         </div>
     </div>
+
+    <!-- Canvas for background grid -->
     <canvas id="gridCanvas"></canvas>
+
+    <!-- Main Content -->
     <main>
         <div class="container">
             <div class="logo-block">
@@ -256,10 +225,7 @@
             </div>
             <div class="search-bar">
                 <div class="custom-dropdown">
-                    <div class="selected-option">
-                        <img src="images/google.png" alt="Selected" class="dropdown-img">
-                        <i class="arrow"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" fill-rule="evenodd" d="M16.53 8.97a.75.75 0 0 1 0 1.06l-4 4a.75.75 0 0 1-1.06 0l-4-4a.75.75 0 1 1 1.06-1.06L12 12.44l3.47-3.47a.75.75 0 0 1 1.06 0" clip-rule="evenodd"/></svg></i>
-                    </div>
+                    <div class="selected-option"><img src="images/google.png" alt="Selected" class="dropdown-img"><i class="arrow"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" fill-rule="evenodd" d="M16.53 8.97a.75.75 0 0 1 0 1.06l-4 4a.75.75 0 0 1-1.06 0l-4-4a.75.75 0 1 1 1.06-1.06L12 12.44l3.47-3.47a.75.75 0 0 1 1.06 0" clip-rule="evenodd"/></svg></i></div>
                     <ul class="dropdown-options">
                         <li data-value="google"><img src="images/google.png" alt="Google"></li>
                         <li data-value="freepik"><img src="images/freepik.png" alt="Freepik"></li>
@@ -287,17 +253,17 @@
                         <li data-value="dictionary"><img src="images/dictionary-com.png" alt="Dictionary"></li>
                     </ul>
                 </div>
-                <input type="hidden" id="selectedValue">
+                <input type="hidden" id="selectedValue" value="google">
                 <input type="text" placeholder="Search the web...">
                 <button><i class='bx bx-search'></i></button>
             </div>
             <ul class="box-container">
-                <!-- Content will be populated dynamically via JSON -->
+                <!-- Bookmarks will be populated here by JavaScript -->
             </ul>
         </div>
     </main>
 
-    <!-- Bottom Nav Updated with Tooltips and new Help Button -->
+    <!-- Bottom Nav -->
     <section class="bottom-nav">
         <div class="container">
             <ul>
@@ -305,35 +271,29 @@
                 <li><a href="#" id="code-tool-btn" title="Code Minifier & Beautifier"><i class='bx bx-code-alt'></i></a></li>
                 <li><a href="#" id="install-help-btn" title="How to Install Extension"><i class='bx bx-help-circle'></i></a></li>
                 <li><a href="./files/NetworkReset-RunAsAdminstrator.bat" target="_blank" rel="nofollow" title="Network Reset Code for Windows PC"><img src="images/network-reset.png" alt="Network Reset"></a></li>
+                <li><a href="#" id="settings-btn" title="Settings"><i class='bx bx-cog'></i></a></li>
             </ul>
         </div>
     </section>
 
     <!-- Theme Toggle Button -->
-    <button id="themeToggle" class="theme-toggle">
-      <span class="bulb"></span>
-    </button>
+    <button id="themeToggle" class="theme-toggle"><span class="bulb"></span></button>
 
-    <!-- New Installation Guide Modal -->
+    <!-- MODALS SECTION -->
     <div id="install-modal" class="modal">
         <div class="modal-content">
             <span class="close-button">&times;</span>
             <h3>How to Install the Chrome Extension</h3>
-            <p>To install this extension for free without using the Chrome Web Store, follow these steps:</p>
             <ol>
-                <li><strong>Download:</strong> &nbsp; &nbsp;Download the Plugin by clicking on this link - <a href="https://homepage.computercenter.in/lca-homepage-extension.zip" style="color:#ff7810" download="lca-homepage-extension.zip" target="_blank" rel="noopener noreferrer">https://homepage.computercenter.in/lca-homepage-extension.zip</a>. If clicking the link doesn't work, please copy and paste it into a new tab.</li>
-                <li><strong>Unzip the File:</strong> Once you download the <code>lca-homepage-extension.zip</code> file, you must unzip it. This will create a regular folder. Place this folder somewhere permanent, like your Desktop or Documents folder (if you delete it, the extension will be removed).</li>
-                <li><strong>Open Chrome Extensions:</strong> Open the Google Chrome browser, type <code>chrome://extensions</code> into the address bar, and press Enter.</li>
-                <li><strong>Enable Developer Mode:</strong> In the top-right corner of the extensions page, find the toggle switch for "Developer mode" and turn it <strong>on</strong>.</li>
-                <li><strong>Load the Extension:</strong> Three new buttons will appear. Click the "Load unpacked" button. A file selection window will open.</li>
-                <li><strong>Select the Folder:</strong> Navigate to and select the folder that you unzipped in Step 1. Do not select the <code>.zip</code> file itself.</li>
+                <li><strong>Download:</strong> &nbsp; &nbsp;Download the Plugin by clicking on this link - <a href="https://homepage.computercenter.in/lca-homepage-extension.zip" style="color:#ff7810" download="lca-homepage-extension.zip" target="_blank" rel="noopener noreferrer">https://homepage.computercenter.in/lca-homepage-extension.zip</a>.</li>
+                <li><strong>Unzip the File:</strong> Once you download the <code>lca-homepage-extension.zip</code> file, you must unzip it.</li>
+                <li><strong>Open Chrome Extensions:</strong> Open Google Chrome, type <code>chrome://extensions</code> into the address bar, and press Enter.</li>
+                <li><strong>Enable Developer Mode:</strong> In the top-right corner, turn <strong>on</strong> "Developer mode".</li>
+                <li><strong>Load the Extension:</strong> Click "Load unpacked" and select the unzipped folder.</li>
             </ol>
-            <p>The extension is now installed! When you open a new tab, you will see the homepage.</p>
-            <p><strong>Note:</strong> Because this extension was not installed from the official store, Chrome will show a warning pop-up each time you start the browser. Simply click the "X" on the pop-up to close it.</p>
         </div>
     </div>
-
-    <!-- New Code Tool Modal -->
+    
     <div id="code-tool-modal" class="modal">
         <div class="modal-content">
             <span class="close-button">&times;</span>
@@ -347,7 +307,6 @@
                             <option value="htmlmixed">HTML</option>
                             <option value="css">CSS</option>
                             <option value="javascript">JavaScript</option>
-                            <option value="php">PHP</option>
                         </select>
                     </div>
                 </div>
@@ -370,7 +329,6 @@
                 <div class="code-tool-footer">
                     <button id="beautify-btn"><i class='bx bxs-magic-wand'></i> Beautify</button>
                     <button id="minify-btn"><i class='bx bx-unite'></i> Minify</button>
-                    <button id="remove-comments-btn"><i class='bx bx-comment-x'></i> Remove Comments</button>
                     <button id="copy-btn"><i class='bx bx-copy'></i> Copy Result</button>
                     <button id="clear-btn"><i class='bx bx-trash'></i> Clear</button>
                 </div>
@@ -378,75 +336,210 @@
         </div>
     </div>
 
-    <!-- JS Beautify Library -->
+    <div id="settings-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-button">&times;</span>
+            <div class="settings-container">
+                <h3>Settings</h3>
+                <div class="settings-tabs">
+                    <div class="settings-tab active" data-pane="appearance">Appearance</div>
+                    <div class="settings-tab" data-pane="bookmarks">Bookmarks</div>
+                    <div class="settings-tab" data-pane="data">Data</div>
+                </div>
+                <div class="settings-content">
+                    <div id="pane-appearance" class="settings-pane active">
+                        <h4>Background Style</h4>
+                        <div class="form-group"><label><input type="radio" name="bg-type" value="default" checked> Default Grid</label><label><input type="radio" name="bg-type" value="gradient"> Gradient</label><label><input type="radio" name="bg-type" value="image"> Image</label></div>
+                        <div id="gradient-settings" class="form-group" style="display: none;"><label>Gradient Colors</label><div class="color-inputs"><input type="color" id="gradient-color-1" value="#8EC5FC"><input type="color" id="gradient-color-2" value="#E0C3FC"></div></div>
+                        <div id="image-settings" class="form-group" style="display: none;"><label for="bg-image-url">Background Image URL</label><input type="url" id="bg-image-url" placeholder="https://example.com/image.jpg"></div>
+                        <button id="apply-background-btn" class="settings-btn">Apply Background</button>
+                    </div>
+                    <div id="pane-bookmarks" class="settings-pane">
+                        <h4>Manage Bookmarks</h4>
+                        <p>Drag and drop to reorder.</p>
+                        <ul id="bookmark-editor-list"></ul>
+                        <button id="add-bookmark-btn" class="settings-btn" style="margin-top: 15px;">Add New Bookmark</button>
+                    </div>
+                    <div id="pane-data" class="settings-pane">
+                        <h4>Import & Export</h4>
+                        <div class="form-group"><button id="export-settings-btn" class="settings-btn">Export Settings</button><p style="font-size: 12px; opacity: 0.8;">Save your settings to a JSON file.</p></div>
+                        <div class="form-group"><label for="import-settings-input" class="settings-btn">Import Settings</label><input type="file" id="import-settings-input" accept=".json" style="display: none;"><p style="font-size: 12px; opacity: 0.8;">Load settings from a JSON file.</p></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- BOOKMARK FORM MODAL (UPDATED) -->
+    <div id="bookmark-form-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-button">&times;</span>
+            <h3 id="bookmark-form-title">Add Bookmark</h3>
+            <form id="bookmark-form">
+                <input type="hidden" id="bookmark-edit-index">
+                <input type="hidden" id="bookmark-image-hidden-src">
+                <div class="form-group">
+                    <label for="bookmark-name">Name</label>
+                    <input type="text" id="bookmark-name" required>
+                </div>
+                <div class="form-group">
+                    <label for="bookmark-url">URL</label>
+                    <input type="url" id="bookmark-url" required>
+                </div>
+                <div class="form-group">
+                    <label for="bookmark-image-upload">Image</label>
+                    <input type="file" id="bookmark-image-upload" accept="image/*">
+                    <p class="image-note">Recommended image size is 98x34 px.</p>
+                    <img id="bookmark-image-preview" src="" alt="Image Preview" style="display: none;">
+                </div>
+                <button type="submit" id="save-bookmark-btn" class="form-button">Save Bookmark</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- JS Libraries -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/js-beautify/1.14.7/beautify.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/js-beautify/1.14.7/beautify-css.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/js-beautify/1.14.7/beautify-html.min.js"></script>
-    
-    <!-- CodeMirror Core and Languages -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.15/codemirror.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.15/mode/xml/xml.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.15/mode/javascript/javascript.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.15/mode/css/css.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.15/mode/htmlmixed/htmlmixed.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.15/mode/php/php.min.js"></script>
 
     <script>
     document.addEventListener("DOMContentLoaded", function () {
+        // --- GLOBAL SELECTORS ---
+        const body = document.body;
+        const canvas = document.getElementById('gridCanvas');
+        const ctx = canvas.getContext('2d');
+        const themeLogo = document.querySelector('.theme-logo');
+        const boxContainer = document.querySelector('.box-container');
+        const searchInput = document.querySelector(".search-bar input[type='text']");
+
+        // --- THEME & GRID ---
+        function drawGrid() {
+            if (!canvas) return;
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            const gridSize = 50;
+            ctx.strokeStyle = body.dataset.theme === 'dark' ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)';
+            for (let x = 0; x <= canvas.width; x += gridSize) {
+                ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, canvas.height); ctx.stroke();
+            }
+            for (let y = 0; y <= canvas.height; y += gridSize) {
+                ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(canvas.width, y); ctx.stroke();
+            }
+        }
+
+        function setTheme(theme) {
+            body.dataset.theme = theme;
+            themeLogo.src = theme === 'dark' ? themeLogo.dataset.darkSrc : 'images/logo.png';
+            localStorage.setItem('themePreference', theme);
+            drawGrid();
+        }
+
+        // --- SETTINGS & DATA MANAGEMENT ---
+        let userSettings = {};
+        const defaultSettings = {
+            background: { type: 'default', value: '' },
+            bookmarks: []
+        };
+
+        function saveSettings() {
+            localStorage.setItem('lcaHomepageSettings', JSON.stringify(userSettings));
+        }
+
+        function loadSettings() {
+            const saved = localStorage.getItem('lcaHomepageSettings');
+            if (saved) {
+                try {
+                    userSettings = JSON.parse(saved);
+                } catch (e) {
+                    console.error("Error parsing settings from localStorage", e);
+                    userSettings = JSON.parse(JSON.stringify(defaultSettings));
+                }
+                applySettings();
+            } else {
+                fetch('homepage.json')
+                    .then(response => {
+                        if (!response.ok) throw new Error('Default bookmarks not found');
+                        return response.json();
+                    })
+                    .then(data => {
+                        userSettings = JSON.parse(JSON.stringify(defaultSettings));
+                        userSettings.bookmarks = data;
+                        applySettings();
+                        saveSettings();
+                    })
+                    .catch(error => {
+                        console.error('Error fetching default bookmarks:', error);
+                        userSettings = JSON.parse(JSON.stringify(defaultSettings));
+                        applySettings();
+                    });
+            }
+        }
+
+        function applySettings() {
+            applyBackground();
+            renderBookmarks();
+        }
+
+        function renderBookmarks() {
+            boxContainer.innerHTML = '';
+            if (!userSettings.bookmarks) return;
+            userSettings.bookmarks.forEach(item => {
+                const li = document.createElement('li');
+                li.innerHTML = `<a class="box" href="${item.href}" target="_blank" rel="nofollow"><img src="${item.imgSrc}" alt="${item.alt}"></a>`;
+                boxContainer.appendChild(li);
+            });
+        }
+        
+        function applyBackground() {
+            const bg = userSettings.background;
+            body.style.backgroundImage = '';
+            body.style.background = '';
+            canvas.style.display = 'none';
+
+            switch (bg ? bg.type : 'default') {
+                case 'gradient':
+                    body.style.background = bg.value;
+                    break;
+                case 'image':
+                    body.style.backgroundImage = `url('${bg.value}')`;
+                    body.style.backgroundSize = 'cover';
+                    body.style.backgroundPosition = 'center';
+                    body.style.backgroundAttachment = 'fixed';
+                    break;
+                default:
+                    canvas.style.display = 'block';
+                    drawGrid();
+                    break;
+            }
+        }
+
+        // --- SEARCH LOGIC ---
         const dropdown = document.querySelector(".custom-dropdown");
         const selectedOption = dropdown.querySelector(".selected-option");
         const dropdownOptions = dropdown.querySelector(".dropdown-options");
         const hiddenInput = document.getElementById("selectedValue");
-        const searchInput = document.querySelector(".search-bar input[type='text']");
         const searchButton = document.querySelector(".search-bar button");
         const navLinks = document.querySelectorAll(".nav-links a");
-        const boxes = document.querySelectorAll(".box-container .box");
         const searchTabs = document.getElementById("search-tabs");
 
         const searchEngines = {
-            google: {
-                web: "https://www.google.com/search?q=",
-                images: "https://www.google.com/search?tbm=isch&q=",
-                videos: "https://www.google.com/search?tbm=vid&q=",
-                news: "https://news.google.com/search?q="
-            },
-            bing: {
-                web: "https://www.bing.com/search?q=",
-                images: "https://www.bing.com/images/search?q=",
-                videos: "https://www.bing.com/videos/search?q=",
-                news: "https://www.bing.com/news/search?q="
-            },
-            yahoo: {
-                web: "https://search.yahoo.com/search?p=",
-                images: "https://images.search.yahoo.com/search/images?p=",
-                videos: "https://video.search.yahoo.com/search/video?p=",
-                news: "https://news.search.yahoo.com/search?p="
-            },
+            google: { web: "https://www.google.com/search?q=", images: "https://www.google.com/search?tbm=isch&q=", videos: "https://www.google.com/search?tbm=vid&q=", news: "https://news.google.com/search?q=" },
+            bing: { web: "https://www.bing.com/search?q=", images: "https://www.bing.com/images/search?q=", videos: "https://www.bing.com/videos/search?q=", news: "https://www.bing.com/news/search?q=" },
+            yahoo: { web: "https://search.yahoo.com/search?p=", images: "https://images.search.yahoo.com/search/images?p=", videos: "https://video.search.yahoo.com/search/video?p=", news: "https://news.search.yahoo.com/search?p=" },
             duckduckgo: { web: "https://duckduckgo.com/?q=" },
-            pinterest: "https://www.pinterest.com/search/pins/?q=",
-            pexels: "https://www.pexels.com/search/",
-            codepen: "https://codepen.io/search/pens?q=",
-            themeforest: "https://themeforest.net/search/",
-            freepik: "https://www.freepik.com/search?query=",
-            flaticon: "https://www.flaticon.com/search?word=",
-            youtube: "https://www.youtube.com/results?search_query=",
-            amazon: "https://www.amazon.in/s?k=",
-            wikipedia: "https://en.wikipedia.org/wiki/",
-            askcom: "https://www.ask.com/web?q=",
-            aol: "https://search.aol.com/aol/search?q=",
-            facebook: "https://www.facebook.com/search/top?q=",
-            reddit: "https://www.reddit.com/search/?q=",
-            twitter: "https://twitter.com/search?q=",
-            ebay: "https://www.ebay.com/sch/i.html?_nkw=",
-            instagram: "https://www.instagram.com/explore/tags/",
-            imdb: "https://www.imdb.com/find?q=",
-            espn: "https://www.espn.com/search/results?q=",
-            godaddy: "https://www.godaddy.com/domains/searchresults.aspx?domainToCheck=",
-            dictionary: "https://www.dictionary.com/browse/"
+            pinterest: "https://www.pinterest.com/search/pins/?q=", pexels: "https://www.pexels.com/search/", codepen: "https://codepen.io/search/pens?q=", themeforest: "https://themeforest.net/search/",
+            freepik: "https://www.freepik.com/search?query=", flaticon: "https://www.flaticon.com/search?word=", youtube: "https://www.youtube.com/results?search_query=", amazon: "https://www.amazon.in/s?k=",
+            wikipedia: "https://en.wikipedia.org/wiki/", askcom: "https://www.ask.com/web?q=", aol: "https://search.aol.com/aol/search?q=", facebook: "https://www.facebook.com/search/top?q=",
+            reddit: "https://www.reddit.com/search/?q=", twitter: "https://twitter.com/search?q=", ebay: "https://www.ebay.com/sch/i.html?_nkw=", instagram: "https://www.instagram.com/explore/tags/",
+            imdb: "https://www.imdb.com/find?q=", espn: "https://www.espn.com/search/results?q=", godaddy: "https://www.godaddy.com/domains/searchresults.aspx?domainToCheck=", dictionary: "https://www.dictionary.com/browse/"
         };
-
         let currentSearchType = "web";
-        hiddenInput.value = "google";
 
         function updateTabsVisibility(engine) {
             const supportsTabs = searchEngines[engine] && typeof searchEngines[engine] === "object";
@@ -454,42 +547,348 @@
             if (!supportsTabs && navLinks[0]) navLinks[0].classList.add("active");
         }
 
-        selectedOption.addEventListener("click", function () {
-            dropdownOptions.style.display = dropdownOptions.style.display === "block" ? "none" : "block";
-        });
-
-        dropdownOptions.querySelectorAll("li").forEach(option => {
-            option.addEventListener("click", function () {
-                const imgSrc = this.querySelector("img").src;
-                selectedOption.innerHTML = `<img src="${imgSrc}" alt="Selected"> <i class="arrow"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" fill-rule="evenodd" d="M16.53 8.97a.75.75 0 0 1 0 1.06l-4 4a.75.75 0 0 1-1.06 0l-4-4a.75.75 0 1 1 1.06-1.06L12 12.44l3.47-3.47a.75.75 0 0 1 1.06 0" clip-rule="evenodd"/></svg></i>`;
-                hiddenInput.value = this.dataset.value;
-                dropdownOptions.style.display = "none";
-                updateTabsVisibility(this.dataset.value);
-            });
-        });
-
-        document.addEventListener("click", function (event) {
-            if (!dropdown.contains(event.target)) dropdownOptions.style.display = "none";
-        });
-
         function performSearch() {
             const query = encodeURIComponent(searchInput.value.trim());
             const engine = hiddenInput.value;
-            if (!query) {
-                searchInput.focus();
-                return;
-            }
+            if (!query) { searchInput.focus(); return; }
             let url = searchEngines[engine];
             if (typeof url === "object" && url[currentSearchType]) url = url[currentSearchType];
             window.open(url + query, "_blank");
             searchInput.value = "";
         }
 
-        searchButton.addEventListener("click", performSearch);
-        searchInput.addEventListener("keypress", function(e) {
-            if (e.key === "Enter") performSearch();
+        // --- TOP BAR: WEATHER & TIME ---
+        function updateWeather() {
+            const weatherTemp = document.querySelector('.weather-temp');
+            const weatherIcon = document.querySelector('.weather-icon');
+            fetch('https://api.open-meteo.com/v1/forecast?latitude=22.8420&longitude=88.6560&current=temperature_2m,weather_code&timezone=Asia/Kolkata')
+                .then(response => response.ok ? response.json() : Promise.reject(`HTTP error! status: ${response.status}`))
+                .then(data => {
+                    weatherTemp.textContent = `${Math.round(data.current.temperature_2m)}°C`;
+                    const iconMap = { 0: '01d', 1: '02d', 2: '03d', 3: '04d', 61: '10d', 80: '09d' };
+                    weatherIcon.style.backgroundImage = `url(https://openweathermap.org/img/wn/${iconMap[data.current.weather_code] || '01d'}.png)`;
+                })
+                .catch(error => { console.error('Error fetching weather:', error); weatherTemp.textContent = 'N/A'; });
+        }
+
+        function updateTime() {
+            const timeDisplay = document.querySelector('.time-display');
+            const hourHand = document.getElementById('hourHand');
+            const minuteHand = document.getElementById('minuteHand');
+            const secondHand = document.getElementById('secondHand');
+            const now = new Date();
+            timeDisplay.textContent = now.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true });
+            const hours = now.getHours() % 12, minutes = now.getMinutes(), seconds = now.getSeconds();
+            hourHand.setAttribute('transform', `rotate(${(hours * 30) + (minutes * 0.5)}, 12, 12)`);
+            minuteHand.setAttribute('transform', `rotate(${minutes * 6}, 12, 12)`);
+            secondHand.setAttribute('transform', `rotate(${seconds * 6}, 12, 12)`);
+        }
+
+        // --- MODAL HANDLING ---
+        function setupModal(modalId, buttonId, openCallback) {
+            const modal = document.getElementById(modalId);
+            const btn = document.getElementById(buttonId);
+            const closeBtn = modal.querySelector(".close-button");
+            if (btn) {
+                btn.onclick = (e) => { 
+                    e.preventDefault(); 
+                    if(openCallback) openCallback(); 
+                    modal.style.display = "block"; 
+                };
+            }
+            if(closeBtn) closeBtn.onclick = () => { modal.style.display = "none"; };
+            return modal;
+        }
+        const installModal = setupModal("install-modal", "install-help-btn");
+        const codeToolModal = setupModal("code-tool-modal", "code-tool-btn");
+        const settingsModal = setupModal("settings-modal", "settings-btn", () => populateSettingsForm());
+        const bookmarkFormModal = setupModal("bookmark-form-modal", null); // Opened programmatically
+        window.addEventListener('click', (event) => {
+            if (event.target == installModal) installModal.style.display = "none";
+            if (event.target == codeToolModal) codeToolModal.style.display = "none";
+            if (event.target == settingsModal) settingsModal.style.display = "none";
+            if (event.target == bookmarkFormModal) bookmarkFormModal.style.display = "none";
         });
 
+        // --- CODE TOOL LOGIC ---
+        const commonConfig = { lineNumbers: true, theme: "monokai", lineWrapping: true, indentUnit: 2, tabSize: 2 };
+        const inputEditor = CodeMirror.fromTextArea(document.getElementById('code-input-textarea'), { ...commonConfig, mode: 'htmlmixed' });
+        const outputEditor = CodeMirror.fromTextArea(document.getElementById('code-output-textarea'), { ...commonConfig, mode: 'htmlmixed', readOnly: true });
+        const langSelect = document.getElementById('code-language-select');
+        const optionsContainer = document.querySelector('.code-tool-options');
+        
+        langSelect.addEventListener('change', () => {
+            const lang = langSelect.value;
+            inputEditor.setOption('mode', lang);
+            outputEditor.setOption('mode', lang);
+            optionsContainer.style.display = lang === 'css' ? 'flex' : 'none';
+        });
+
+        document.getElementById('beautify-btn').addEventListener('click', () => {
+            const code = inputEditor.getValue();
+            if (!code) return;
+            const options = { indent_size: 2, space_in_empty_paren: true };
+            let beautifiedCode = '';
+            try {
+                if (langSelect.value === 'javascript') beautifiedCode = js_beautify(code, options);
+                else if (langSelect.value === 'css') beautifiedCode = css_beautify(code, options);
+                else beautifiedCode = html_beautify(code, options);
+                outputEditor.setValue(beautifiedCode);
+            } catch (e) { outputEditor.setValue("Error: " + e.message); }
+        });
+
+        document.getElementById('minify-btn').addEventListener('click', () => {
+            let code = inputEditor.getValue();
+            if (!code) return;
+            let minifiedCode = code.replace(/\/\*[\s\S]*?\*\/|(?<!:)\/\/[^\r\n]*/g, '').replace(/\s+/g, ' ');
+            outputEditor.setValue(minifiedCode);
+        });
+
+        document.getElementById('copy-btn').addEventListener('click', () => {
+            navigator.clipboard.writeText(outputEditor.getValue());
+        });
+        document.getElementById('clear-btn').addEventListener('click', () => {
+            inputEditor.setValue('');
+            outputEditor.setValue('');
+        });
+        document.getElementById('swap-btn').addEventListener('click', () => {
+            const temp = inputEditor.getValue();
+            inputEditor.setValue(outputEditor.getValue());
+            outputEditor.setValue(temp);
+        });
+        const fileInput = document.getElementById('file-input');
+        document.getElementById('upload-btn').addEventListener('click', () => fileInput.click());
+        fileInput.addEventListener('change', (event) => {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = (e) => inputEditor.setValue(e.target.result);
+                reader.readAsText(file);
+            }
+        });
+        const observer = new MutationObserver(() => {
+            if (codeToolModal.style.display === 'block') {
+                inputEditor.refresh();
+                outputEditor.refresh();
+            }
+        });
+        observer.observe(codeToolModal, { attributes: true, attributeFilter: ['style'] });
+
+
+        // --- SETTINGS MODAL LOGIC ---
+        settingsModal.querySelectorAll('.settings-tab').forEach(tab => {
+            tab.addEventListener('click', () => {
+                settingsModal.querySelector('.settings-tab.active').classList.remove('active');
+                settingsModal.querySelector('.settings-pane.active').classList.remove('active');
+                tab.classList.add('active');
+                settingsModal.querySelector(`#pane-${tab.dataset.pane}`).classList.add('active');
+            });
+        });
+        
+        function populateSettingsForm() {
+            const bg = userSettings.background;
+            document.querySelector(`input[name="bg-type"][value="${bg ? bg.type : 'default'}"]`).checked = true;
+            if (bg && bg.type === 'gradient' && bg.value) {
+                const colors = bg.value.match(/#[0-9a-fA-F]{6}/g);
+                if (colors && colors.length >= 2) {
+                    document.getElementById('gradient-color-1').value = colors[0];
+                    document.getElementById('gradient-color-2').value = colors[1];
+                }
+            } else if (bg && bg.type === 'image') {
+                document.getElementById('bg-image-url').value = bg.value;
+            }
+            toggleBackgroundControls();
+            renderBookmarkEditor();
+        }
+
+        const bgTypeRadios = document.querySelectorAll('input[name="bg-type"]');
+        function toggleBackgroundControls() {
+            const type = document.querySelector('input[name="bg-type"]:checked').value;
+            document.getElementById('gradient-settings').style.display = type === 'gradient' ? 'block' : 'none';
+            document.getElementById('image-settings').style.display = type === 'image' ? 'block' : 'none';
+        }
+        bgTypeRadios.forEach(radio => radio.addEventListener('change', toggleBackgroundControls));
+
+        document.getElementById('apply-background-btn').addEventListener('click', () => {
+            const type = document.querySelector('input[name="bg-type"]:checked').value;
+            let value = '';
+            if (type === 'gradient') {
+                value = `linear-gradient(135deg, ${document.getElementById('gradient-color-1').value}, ${document.getElementById('gradient-color-2').value})`;
+            } else if (type === 'image') {
+                value = document.getElementById('bg-image-url').value;
+            }
+            userSettings.background = { type, value };
+            saveSettings();
+            applyBackground();
+        });
+
+        // --- IMPROVED BOOKMARK MANAGEMENT ---
+        const bookmarkEditorList = document.getElementById('bookmark-editor-list');
+        const addBookmarkBtn = document.getElementById('add-bookmark-btn');
+        const bookmarkForm = document.getElementById('bookmark-form');
+        const bookmarkFormTitle = document.getElementById('bookmark-form-title');
+        const editIndexInput = document.getElementById('bookmark-edit-index');
+        const imagePreview = document.getElementById('bookmark-image-preview');
+        const imageUploadInput = document.getElementById('bookmark-image-upload');
+        const hiddenImageSrcInput = document.getElementById('bookmark-image-hidden-src');
+
+        function renderBookmarkEditor() {
+            bookmarkEditorList.innerHTML = '';
+            if(!userSettings.bookmarks) userSettings.bookmarks = [];
+            userSettings.bookmarks.forEach((bookmark, index) => {
+                const item = document.createElement('li');
+                item.setAttribute('draggable', true);
+                item.dataset.index = index;
+                item.innerHTML = `<i class='bx bx-grid-vertical'></i><img src="${bookmark.imgSrc}" alt=""><div class="bookmark-info">${bookmark.alt}</div><div class="bookmark-actions"><button class="edit-bookmark-btn" title="Edit"><i class='bx bx-pencil'></i></button><button class="delete-bookmark-btn" title="Delete"><i class='bx bx-trash'></i></button></div>`;
+                bookmarkEditorList.appendChild(item);
+            });
+            
+            bookmarkEditorList.querySelectorAll('.delete-bookmark-btn').forEach((btn, index) => {
+                btn.onclick = () => {
+                    userSettings.bookmarks.splice(index, 1);
+                    saveSettings(); applySettings(); renderBookmarkEditor();
+                };
+            });
+            bookmarkEditorList.querySelectorAll('.edit-bookmark-btn').forEach((btn, index) => {
+                btn.onclick = () => openBookmarkForm(index);
+            });
+        }
+        
+        function openBookmarkForm(index = null) {
+            bookmarkForm.reset();
+            if (index !== null) {
+                // Editing existing bookmark
+                const bookmark = userSettings.bookmarks[index];
+                bookmarkFormTitle.textContent = 'Edit Bookmark';
+                document.getElementById('bookmark-name').value = bookmark.alt;
+                document.getElementById('bookmark-url').value = bookmark.href;
+                hiddenImageSrcInput.value = bookmark.imgSrc;
+                imagePreview.src = bookmark.imgSrc;
+                imagePreview.style.display = 'block';
+                imageUploadInput.required = false; // Not required when editing
+                editIndexInput.value = index;
+            } else {
+                // Adding new bookmark
+                bookmarkFormTitle.textContent = 'Add New Bookmark';
+                imagePreview.style.display = 'none';
+                imageUploadInput.required = true; // Required for new bookmarks
+                editIndexInput.value = '';
+            }
+            bookmarkFormModal.style.display = 'block';
+        }
+
+        addBookmarkBtn.addEventListener('click', () => openBookmarkForm());
+
+        bookmarkForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            
+            const name = document.getElementById('bookmark-name').value;
+            const url = document.getElementById('bookmark-url').value;
+            const file = imageUploadInput.files[0];
+            const editIndex = editIndexInput.value;
+
+            const processBookmark = (imgSrc) => {
+                const bookmarkData = { alt: name, href: url, imgSrc: imgSrc };
+                if (editIndex !== '') {
+                    userSettings.bookmarks[parseInt(editIndex, 10)] = bookmarkData;
+                } else {
+                    if (!userSettings.bookmarks) userSettings.bookmarks = [];
+                    userSettings.bookmarks.push(bookmarkData);
+                }
+                saveSettings();
+                applySettings();
+                renderBookmarkEditor();
+                bookmarkFormModal.style.display = 'none';
+            };
+
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    processBookmark(event.target.result); // Use base64 data URL
+                };
+                reader.readAsDataURL(file);
+            } else if (editIndex !== '') {
+                // If editing and no new file, use the old image src
+                const existingImgSrc = hiddenImageSrcInput.value;
+                processBookmark(existingImgSrc);
+            }
+        });
+
+        let draggedItem = null;
+        bookmarkEditorList.addEventListener('dragstart', (e) => {
+            draggedItem = e.target.closest('li');
+            setTimeout(() => draggedItem.classList.add('dragging'), 0);
+        });
+        bookmarkEditorList.addEventListener('dragend', () => {
+            if(draggedItem) draggedItem.classList.remove('dragging');
+        });
+        bookmarkEditorList.addEventListener('dragover', e => {
+            e.preventDefault();
+            const afterElement = [...bookmarkEditorList.querySelectorAll('li:not(.dragging)')].reduce((closest, child) => {
+                const box = child.getBoundingClientRect();
+                const offset = e.clientY - box.top - box.height / 2;
+                return (offset < 0 && offset > closest.offset) ? { offset: offset, element: child } : closest;
+            }, { offset: Number.NEGATIVE_INFINITY }).element;
+            if (afterElement == null) {
+                if(draggedItem) bookmarkEditorList.appendChild(draggedItem);
+            } else {
+                if(draggedItem) bookmarkEditorList.insertBefore(draggedItem, afterElement);
+            }
+        });
+        bookmarkEditorList.addEventListener('drop', () => {
+            const newOrder = [];
+            bookmarkEditorList.querySelectorAll('li').forEach(item => {
+                newOrder.push(userSettings.bookmarks[item.dataset.index]);
+            });
+            userSettings.bookmarks = newOrder;
+            saveSettings();
+            applySettings();
+            renderBookmarkEditor();
+        });
+
+        // --- DATA IMPORT/EXPORT ---
+        document.getElementById('export-settings-btn').addEventListener('click', () => {
+            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(userSettings, null, 2));
+            const dl = document.createElement('a');
+            dl.setAttribute("href", dataStr);
+            dl.setAttribute("download", "homepage-settings.json");
+            dl.click();
+        });
+        const importInput = document.getElementById('import-settings-input');
+        importInput.addEventListener('change', (event) => {
+            const file = event.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                try {
+                    const imported = JSON.parse(e.target.result);
+                    if (imported.bookmarks && imported.background) {
+                        userSettings = imported;
+                        saveSettings(); applySettings(); populateSettingsForm();
+                    } else { alert('Invalid settings file.'); }
+                } catch (error) { alert('Error reading file.'); }
+            };
+            reader.readAsText(file);
+        });
+        document.querySelector('label[for="import-settings-input"]').addEventListener('click', () => importInput.click());
+
+        // --- INITIALIZATION & EVENT LISTENERS ---
+        const themeToggleButton = document.getElementById('themeToggle');
+        themeToggleButton.addEventListener('click', () => setTheme(body.dataset.theme === 'light' ? 'dark' : 'light'));
+        window.addEventListener('resize', drawGrid);
+        
+        selectedOption.addEventListener("click", () => dropdownOptions.style.display = 'block');
+        document.addEventListener("click", (e) => { if (!dropdown.contains(e.target)) dropdownOptions.style.display = "none"; });
+        dropdownOptions.querySelectorAll("li").forEach(option => {
+            option.addEventListener("click", function () {
+                selectedOption.querySelector("img").src = this.querySelector("img").src;
+                hiddenInput.value = this.dataset.value;
+                dropdownOptions.style.display = "none";
+                updateTabsVisibility(this.dataset.value);
+            });
+        });
+        searchButton.addEventListener("click", performSearch);
+        searchInput.addEventListener("keypress", (e) => { if (e.key === "Enter") performSearch(); });
         navLinks.forEach(link => {
             link.addEventListener("click", function(e) {
                 e.preventDefault();
@@ -499,381 +898,15 @@
             });
         });
 
-        boxes.forEach(box => {
-            box.addEventListener("click", function(e) {
-                const href = this.getAttribute("href");
-                const isCustomLink = href && href !== "#";
-                if (isCustomLink) {
-                    window.open(href, "_blank");
-                } else {
-                    e.preventDefault();
-                    const imgSrc = this.querySelector("img").src;
-                    const engineOption = dropdownOptions.querySelector(`li img[src="${imgSrc}"]`);
-                    if (engineOption) {
-                        hiddenInput.value = engineOption.parentElement.dataset.value;
-                        selectedOption.innerHTML = `<img src="${imgSrc}" alt="Selected"> <i class="arrow"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" fill-rule="evenodd" d="M16.53 8.97a.75.75 0 0 1 0 1.06l-4 4a.75.75 0 0 1-1.06 0l-4-4a.75.75 0 1 1 1.06-1.06L12 12.44l3.47-3.47a.75.75 0 0 1 1.06 0" clip-rule="evenodd"/></svg></i>`;
-                        updateTabsVisibility(hiddenInput.value);
-                        if (searchInput.value.trim()) performSearch();
-                        else window.open(searchEngines[hiddenInput.value], "_blank");
-                    }
-                }
-            });
-        });
-
-        searchInput.addEventListener("focus", function() { this.select(); });
-        searchInput.focus();
-        updateTabsVisibility("google");
-
-        // Weather
-        const weatherTemp = document.querySelector('.weather-temp');
-        const weatherIcon = document.querySelector('.weather-icon');
-
-        fetch('https://api.open-meteo.com/v1/forecast?latitude=22.8420&longitude=88.6560&current=temperature_2m,weather_code&timezone=Asia/Kolkata')
-            .then(response => {
-                if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-                return response.json();
-            })
-            .then(data => {
-                const temp = Math.round(data.current.temperature_2m);
-                const weatherCode = data.current.weather_code;
-                weatherTemp.textContent = `${temp}°C`;
-
-                const iconMap = {
-                    0: '01d', 1: '02d', 2: '03d', 3: '04d', 61: '10d', 80: '09d'
-                };
-                const iconCode = iconMap[weatherCode] || '01d';
-                weatherIcon.style.backgroundImage = `url(https://openweathermap.org/img/wn/${iconCode}.png)`;
-            })
-            .catch(error => {
-                console.error('Error fetching weather:', error);
-                weatherTemp.textContent = 'Weather N/A';
-            });
-
-        // Time Display and Clock Hands
-        const timeDisplay = document.querySelector('.time-display');
-        const hourHand = document.getElementById('hourHand');
-        const minuteHand = document.getElementById('minuteHand');
-        const secondHand = document.getElementById('secondHand');
-
-        function updateTime() {
-            const now = new Date();
-            const options = { hour: 'numeric', minute: '2-digit', hour12: true };
-            timeDisplay.textContent = now.toLocaleTimeString('en-US', options);
-            
-            const hours = now.getHours() % 12;
-            const minutes = now.getMinutes();
-            const seconds = now.getSeconds();
-            
-            const hourDeg = (hours * 30) + (minutes * 0.5);
-            const minuteDeg = minutes * 6;
-            const secondDeg = seconds * 6;
-            
-            hourHand.setAttribute('transform', `rotate(${hourDeg}, 12, 12)`);
-            minuteHand.setAttribute('transform', `rotate(${minuteDeg}, 12, 12)`);
-            secondHand.setAttribute('transform', `rotate(${secondDeg}, 12, 12)`);
-        }
-
+        // --- Load everything ---
+        setTheme(localStorage.getItem('themePreference') || 'light');
+        loadSettings();
+        updateWeather();
         updateTime();
         setInterval(updateTime, 1000);
-
-        // Fetch and populate box-container from JSON
-        fetch('homepage.json')
-            .then(response => response.json())
-            .then(data => {
-                const boxContainer = document.querySelector('.box-container');
-                boxContainer.innerHTML = ''; // Clear any existing content
-                data.forEach(item => {
-                    const li = document.createElement('li');
-                    li.innerHTML = `<a class="box" href="${item.href}" target="_blank" rel="nofollow"><img src="${item.imgSrc}" alt="${item.alt}"></a>`;
-                    boxContainer.appendChild(li);
-                });
-            })
-            .catch(error => console.error('Error fetching box-container JSON:', error));
-            
-        // Modal Logic
-        const installModal = document.getElementById("install-modal");
-        const installBtn = document.getElementById("install-help-btn");
-        const installCloseBtn = installModal.querySelector(".close-button");
-
-        installBtn.onclick = function(e) { e.preventDefault(); installModal.style.display = "block"; }
-        installCloseBtn.onclick = function() { installModal.style.display = "none"; }
-
-        const codeToolModal = document.getElementById("code-tool-modal");
-        const codeToolBtn = document.getElementById("code-tool-btn");
-        const codeToolCloseBtn = codeToolModal.querySelector(".close-button");
-        
-        codeToolBtn.onclick = function(e) { e.preventDefault(); codeToolModal.style.display = "block"; }
-        codeToolCloseBtn.onclick = function() { codeToolModal.style.display = "none"; }
-
-        window.onclick = function(event) {
-            if (event.target == installModal) installModal.style.display = "none";
-            if (event.target == codeToolModal) codeToolModal.style.display = "none";
-        }
-
-        // --- Code Tool Functionality ---
-        const commonConfig = {
-            lineNumbers: true,
-            theme: "monokai",
-            lineWrapping: true,
-            indentUnit: 2,
-            tabSize: 2
-        };
-
-        const inputEditor = CodeMirror.fromTextArea(document.getElementById('code-input-textarea'), {
-            ...commonConfig,
-            mode: 'htmlmixed',
-        });
-
-        const outputEditor = CodeMirror.fromTextArea(document.getElementById('code-output-textarea'), {
-            ...commonConfig,
-            mode: 'htmlmixed',
-            readOnly: true
-        });
-
-        const beautifyBtn = document.getElementById('beautify-btn');
-        const minifyBtn = document.getElementById('minify-btn');
-        const removeCommentsBtn = document.getElementById('remove-comments-btn');
-        const copyBtn = document.getElementById('copy-btn');
-        const clearBtn = document.getElementById('clear-btn');
-        const langSelect = document.getElementById('code-language-select');
-        const swapBtn = document.getElementById('swap-btn');
-        const uploadBtn = document.getElementById('upload-btn');
-        const fileInput = document.getElementById('file-input');
-        const inputStats = document.getElementById('input-stats');
-        const outputStats = document.getElementById('output-stats');
-        const sortCssCheckbox = document.getElementById('option-sort-css');
-        const optionsContainer = document.querySelector('.code-tool-options');
-        
-        const updateStats = (editor, statsEl) => {
-            const text = editor.getValue();
-            const charCount = text.length;
-            const lineCount = editor.lineCount();
-            statsEl.textContent = `Chars: ${charCount} | Lines: ${lineCount}`;
-        };
-        
-        inputEditor.on('change', (editor) => updateStats(editor, inputStats));
-        outputEditor.on('change', (editor) => updateStats(editor, outputStats));
-
-        langSelect.addEventListener('change', () => {
-            const lang = langSelect.value;
-            inputEditor.setOption('mode', lang);
-            outputEditor.setOption('mode', lang);
-            if (lang === 'css') {
-                optionsContainer.style.display = 'flex';
-            } else {
-                optionsContainer.style.display = 'none';
-            }
-        });
-
-        function sortCssProperties(cssText) {
-            return cssText.replace(/\{([^}]+)\}/g, (match, properties) => {
-                const propsArray = properties.split(';')
-                    .map(p => p.trim())
-                    .filter(p => p.length > 0);
-                
-                propsArray.sort();
-                
-                const sortedProperties = ' ' + propsArray.join('; ') + (propsArray.length > 0 ? '; ' : '') + '}';
-                return '{' + sortedProperties;
-            });
-        }
-        
-        function removeAllComments(code) {
-             return code.replace(/<!--[\s\S]*?-->/g, '')      // HTML comments
-                       .replace(/\/\*[\s\S]*?\*\//g, '')    // CSS, JS, PHP block comments
-                       .replace(/(?<!:)\/\/[^\r\n]*/g, '') // JS, PHP line comments (avoids URLs)
-                       .replace(/^\s*\n/gm, '');          // Cleanup empty lines
-        }
-
-        beautifyBtn.addEventListener('click', () => {
-            const lang = langSelect.value;
-            let code = inputEditor.getValue();
-            if (!code) return;
-
-            if (lang === 'css' && sortCssCheckbox.checked) {
-                code = sortCssProperties(code);
-            }
-
-            let beautifiedCode = '';
-            try {
-                const options = { indent_size: 2, space_in_empty_paren: true, indent_scripts: 'normal', indent_inner_html: true };
-                if (lang === 'javascript') {
-                    beautifiedCode = js_beautify(code, options);
-                } else if (lang === 'htmlmixed' || lang === 'php') {
-                    beautifiedCode = html_beautify(code, options);
-                } else if (lang === 'css') {
-                    beautifiedCode = css_beautify(code, options);
-                }
-                outputEditor.setValue(beautifiedCode);
-            } catch(e) {
-                outputEditor.setValue("Error beautifying code: " + e.message);
-            }
-        });
-
-        minifyBtn.addEventListener('click', () => {
-            let code = inputEditor.getValue();
-            if (!code) return;
-            
-            code = removeAllComments(code);
-
-            let minifiedCode = code;
-            try {
-                if (langSelect.value === 'javascript') {
-                    minifiedCode = code.replace(/\s+/g, ' ');
-                } else if (langSelect.value === 'css') {
-                    minifiedCode = code.replace(/\s{2,}/g, ' ').replace(/ ?([{:};,]) ?/g, '$1').trim();
-                } else if (langSelect.value === 'htmlmixed' || langSelect.value === 'php') {
-                    minifiedCode = code.replace(/>\s+</g, '><').replace(/\s\s+/g, ' ');
-                }
-                outputEditor.setValue(minifiedCode);
-            } catch(e) {
-                outputEditor.setValue("Error minifying code: " + e.message);
-            }
-        });
-        
-        removeCommentsBtn.addEventListener('click', () => {
-            let code = inputEditor.getValue();
-            if (!code) return;
-            inputEditor.setValue(removeAllComments(code));
-        });
-
-        copyBtn.addEventListener('click', () => {
-            const codeToCopy = outputEditor.getValue();
-            if (!codeToCopy) return;
-            navigator.clipboard.writeText(codeToCopy).then(() => {
-                const originalText = copyBtn.innerHTML;
-                copyBtn.innerHTML = "<i class='bx bx-check'></i> Copied!";
-                setTimeout(() => { copyBtn.innerHTML = originalText; }, 2000);
-            });
-        });
-
-        clearBtn.addEventListener('click', () => {
-            inputEditor.setValue('');
-            outputEditor.setValue('');
-        });
-
-        swapBtn.addEventListener('click', () => {
-            const temp = inputEditor.getValue();
-            inputEditor.setValue(outputEditor.getValue());
-            outputEditor.setValue(temp);
-        });
-
-        uploadBtn.addEventListener('click', () => fileInput.click());
-        fileInput.addEventListener('change', (event) => {
-            const file = event.target.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = (e) => {
-                    inputEditor.setValue(e.target.result);
-                };
-                reader.readAsText(file);
-            }
-        });
-        
-        // Initial stats update
-        updateStats(inputEditor, inputStats);
-        updateStats(outputEditor, outputStats);
-
-        // Refresh editors when modal is opened to fix layout issues
-        const observer = new MutationObserver((mutations) => {
-          mutations.forEach((mutation) => {
-            if (mutation.type === 'attributes' && mutation.attributeName === 'style') {
-              if (codeToolModal.style.display === 'block') {
-                inputEditor.refresh();
-                outputEditor.refresh();
-              }
-            }
-          });
-        });
-        observer.observe(codeToolModal, { attributes: true });
-    });
-
-    // Canvas Grid Background
-    const canvas = document.getElementById('gridCanvas');
-    const ctx = canvas.getContext('2d');
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
-
-    function drawGrid() {
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        const gridSize = 50;
-        ctx.strokeStyle = document.body.dataset.theme === 'dark' ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)';
-        for (let x = 0; x <= canvas.width; x += gridSize) {
-            ctx.beginPath();
-            ctx.moveTo(x, 0);
-            ctx.lineTo(x, canvas.height);
-            ctx.stroke();
-        }
-        for (let y = 0; y <= canvas.height; y += gridSize) {
-            ctx.beginPath();
-            ctx.moveTo(0, y);
-            ctx.lineTo(canvas.width, y);
-            ctx.stroke();
-        }
-    }
-
-    window.addEventListener('resize', () => {
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
-        drawGrid();
-    });
-    drawGrid();
-
-    // Theme Toggle with Local Storage
-    const toggleButton = document.getElementById('themeToggle');
-    const body = document.body;
-    const themeLogo = document.querySelector('.theme-logo');
-
-    function setTheme(theme) {
-        body.dataset.theme = theme;
-        themeLogo.src = theme === 'dark' ? themeLogo.dataset.darkSrc : 'images/logo.png';
-        drawGrid(); // Redraw grid on theme change
-        localStorage.setItem('themePreference', theme);
-    }
-
-    document.addEventListener("DOMContentLoaded", function () {
-        const savedTheme = localStorage.getItem('themePreference');
-        if (savedTheme) {
-            setTheme(savedTheme);
-        } else {
-            // Default to light theme if nothing is saved
-            setTheme('light');
-        }
-
-        toggleButton.addEventListener('click', () => {
-            const currentTheme = body.dataset.theme;
-            const newTheme = currentTheme === 'light' ? 'dark' : 'light';
-            setTheme(newTheme);
-        });
+        searchInput.focus();
+        updateTabsVisibility("google");
     });
     </script>
-    
-    <script>
-    console.info(
-        '%chttps://learncomputeracademy.github.io/homepage/lca-homepage-extension.zip',
-        `line-height:88px;padding-block:44px;color:#ffb400;font-family:'Phosphate';font-size:24px;padding-inline:205px;background-repeat:no-repeat;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 610 88'%3E%3Cdefs%3E%3Cfilter id='glow'%3E%3CfeGaussianBlur stdDeviation='2.5' result='coloredBlur'%3E%3C/feGaussianBlur%3E%3CfeMerge%3E%3CfeMergeNode in='coloredBlur'%3E%3C/feMergeNode%3E%3CfeMergeNode in='SourceGraphic'%3E%3C/feMerge%3E%3C/filter%3E%3C/defs%3E%3Cpath filter='url(%23glow)' fill='%23ffb400' d='M545.835 10c-1.643 0-3.18.646-4.326 1.822a6.052 6.052 0 0 0 .101 8.548l13.723 13.397-48.961.362a6.378 6.378 0 0 0-6.371 6.37 6.377 6.377 0 0 0 6.37 6.37h11.902a5.946 5.946 0 0 0-1.868 4.316 5.95 5.95 0 0 0 1.807 4.264c.054.056.118.102.174.156.112.101.224.2.344.293a5.986 5.986 0 0 0 3.494 1.397 5.944 5.944 0 0 0-1.725 4.177 5.9 5.9 0 0 0 .76 2.899 6.047 6.047 0 0 0 5.287 3.275 6.028 6.028 0 0 0-1.791 4.293c0 .309.031.61.076.906.003.02.004.04.008.061.16.99.572 1.89 1.152 2.658a6.086 6.086 0 0 0 .852.91c.086.075.175.147.265.217a5.978 5.978 0 0 0 3.325 1.273c.093.007.186.014.28.016.03 0 .058.004.087.004h41.271a9.606 9.606 0 0 0 9.188-6.725h5.418v3.838h13.324V37.254h-13.324v4.218h-5.287c-2.754-5.768-26.366-25.62-31.358-29.777a6.012 6.012 0 0 0-4.197-1.696zm0 1.754a4.27 4.27 0 0 1 2.998 1.22l.05.047c14.806 12.329 30.71 26.833 31.02 29.432l.092.773h6.682v26.28H579.9l-.162.671a7.862 7.862 0 0 1-7.667 6.053h-20.54a5.952 5.952 0 0 0 1.809-4.266c0-3.32-2.748-6.02-6.125-6.02h-.182c1.25-1.102 2.041-2.695 2.041-4.472 0-3.249-2.63-5.903-5.908-6.015a5.954 5.954 0 0 0 1.814-4.272c0-3.32-2.747-6.02-6.125-6.02h-.422v-.05h-32.062a4.622 4.622 0 0 1-4.617-4.616 4.624 4.624 0 0 1 4.623-4.617l53.231-.392-16.772-16.373a4.296 4.296 0 0 1-.072-6.069 4.257 4.257 0 0 1 3.07-1.295zm42.596 27.253h9.816v34.336h-9.816v-31.87Zm-49.996 7.913h.421c2.41 0 4.371 1.913 4.371 4.265 0 2.352-1.96 4.266-4.37 4.266H522.53a4.41 4.41 0 0 1-3.035-1.202 4.267 4.267 0 0 1-1.219-2.984 4.297 4.297 0 0 1 4.291-4.293h15.867zm-11.807 10.286h16.322c2.41 0 4.371 1.914 4.371 4.266 0 2.353-1.96 4.266-4.37 4.266h-16.327a4.39 4.39 0 0 1-3.705-2.016 4.245 4.245 0 0 1-.584-2.12 4.297 4.297 0 0 1 4.293-4.292zm4.261 10.493h16.327c2.41 0 4.37 1.913 4.37 4.265 0 2.353-1.96 4.266-4.37 4.266h-16.327c-.057 0-.113-.006-.17-.008a4.259 4.259 0 0 1-.595-.06 4.42 4.42 0 0 1-.467-.106c-.049-.013-.096-.03-.145-.045a4.386 4.386 0 0 1-1.95-1.287c-.036-.041-.07-.084-.104-.127a4.244 4.244 0 0 1-.326-.463 4.291 4.291 0 0 1-.332-.68 4.205 4.205 0 0 1-.165-.525 4.288 4.288 0 0 1-.11-.814c0-.05-.007-.1-.007-.15 0-.088.01-.173.014-.258.007-.114.02-.224.035-.334.297-2.073 2.118-3.674 4.322-3.674zM64.165 10a6.013 6.013 0 0 0-4.197 1.695c-4.992 4.157-28.604 24.01-31.358 29.777h-5.287v-4.219H10v37.844h13.324V71.26h5.418a9.606 9.606 0 0 0 9.188 6.724H79.2c.029 0 .057-.003.086-.004.094-.003.188-.01.28-.016a5.974 5.974 0 0 0 3.325-1.273c.09-.07.18-.142.266-.217a6.047 6.047 0 0 0 .851-.91 5.993 5.993 0 0 0 1.157-2.684l.004-.035a6.033 6.033 0 0 0 .076-.906 6.028 6.028 0 0 0-1.791-4.293 6.047 6.047 0 0 0 5.287-3.275 5.9 5.9 0 0 0 .76-2.9c0-1.62-.66-3.093-1.725-4.176a5.986 5.986 0 0 0 3.494-1.397 6.114 6.114 0 0 0 .344-.293c.056-.054.12-.1.174-.156a5.953 5.953 0 0 0 1.806-4.264 5.946 5.946 0 0 0-1.867-4.316h11.9a6.377 6.377 0 0 0 6.372-6.37 6.378 6.378 0 0 0-6.371-6.37l-48.961-.362L68.389 20.37a6.052 6.052 0 0 0 .102-8.548 5.997 5.997 0 0 0-4.326-1.823Zm0 1.754a4.257 4.257 0 0 1 3.07 1.294 4.296 4.296 0 0 1-.072 6.069L50.391 35.49l53.23.392a4.624 4.624 0 0 1 4.624 4.617 4.622 4.622 0 0 1-4.617 4.616H71.565v.05h-.422c-3.377 0-6.125 2.7-6.125 6.02 0 1.668.696 3.18 1.815 4.272-3.278.112-5.909 2.766-5.909 6.015 0 1.777.792 3.37 2.041 4.473h-.181c-3.378 0-6.125 2.7-6.125 6.02a5.95 5.95 0 0 0 1.809 4.265h-20.54a7.862 7.862 0 0 1-7.668-6.053l-.162-.672h-6.775V43.226h6.682l.092-.774c.31-2.599 16.213-17.102 31.019-29.431l.05-.047a4.27 4.27 0 0 1 2.999-1.22zM11.753 39.007h9.816v34.336h-9.816zm59.39 7.913h.423v.052h15.867a4.297 4.297 0 0 1 4.291 4.293 4.267 4.267 0 0 1-1.22 2.985 4.359 4.359 0 0 1-.241.215l-.022.017a4.417 4.417 0 0 1-2.772.969H71.144c-2.41 0-4.371-1.914-4.371-4.266 0-2.352 1.96-4.265 4.37-4.265zM67.05 57.206h16.322v.104a4.297 4.297 0 0 1 4.294 4.291c0 .775-.224 1.493-.585 2.121a4.39 4.39 0 0 1-3.705 2.016H67.05c-2.41 0-4.371-1.913-4.371-4.266 0-2.352 1.96-4.266 4.37-4.266zM62.785 67.7H79.11c2.204 0 4.025 1.601 4.322 3.673a4.265 4.265 0 0 1 .035.335c.005.086.014.17.014.257 0 .051-.006.1-.008.15a4.31 4.31 0 0 1-.11.815 4.24 4.24 0 0 1-.296.834 4.349 4.349 0 0 1-.525.834c-.035.043-.069.086-.104.127a4.376 4.376 0 0 1-.54.523c-.004.005-.01.008-.015.012a4.401 4.401 0 0 1-1.396.752c-.049.015-.096.032-.145.045a4.311 4.311 0 0 1-.467.105 4.234 4.234 0 0 1-.596.061c-.056.002-.112.008-.17.008H62.785c-2.41 0-4.37-1.913-4.37-4.266 0-2.352 1.96-4.265 4.37-4.265z'%3E%3C/path%3E%3C/svg%3E")`
-    );
-    function displayInstallationInstructions() {
-        console.info("%c✨ Chrome Installation  ✨", "color: #4285f4; font-size: 16px; font-weight: bold;");
-        console.info("%cStep 1: 🌐 Open Chrome and go to chrome://extensions/", "color: #34a853; padding: 5px;");
-        console.info("%cStep 2: 🧙‍♂️ Enable 'Developer mode'", "color: #34a853; padding: 5px;");
-        console.info("%cStep 3: 🎁 Click 'Load unpacked' and select your extension folder", "color: #34a853; padding: 5px;");
-        console.info("%c────────────────────────────────────", "color: #ea4335;");
-        console.info("%c🎉 Enjoy your LCA Homepage! 🎉", "color: #4285f4; font-style: italic;");
-    }
-    displayInstallationInstructions();
-    </script>
-<!-- <script>
-     window.RobotBlockerConfig = {
-        blockRightClick: false,
-        blockDevTools: false,
-        blockSelection: false,
-        blockPrintScreen: false,
-        disableDragDrop: false,
-    };
-</script>
-<script src="https://cdn.jsdelivr.net/gh/amartadey/robotBlocker@latest/robotBlocker.js"></script> -->
-    
-    
 </body>
 </html>
