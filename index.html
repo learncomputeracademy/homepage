@@ -112,7 +112,7 @@
         .code-tool-body { display: grid; grid-template-columns: 1fr 40px 1fr; gap: 10px; height: 65vh; }
         .code-pane { border-radius: 8px; overflow: hidden; display: flex; flex-direction: column; border: 1px solid var(--border-color); }
         .CodeMirror { flex-grow: 1; height: auto; font-family: 'Fira Code', monospace; font-size: 14px; }
-        .code-tool-footer { display: flex; justify-content: center; gap: 10px; padding-top: 15px; border-top: 1px solid var(--border-color); }
+        .code-tool-footer { display: flex; justify-content: center; gap: 10px; flex-wrap: wrap; padding-top: 15px; border-top: 1px solid var(--border-color); }
         .code-tool-footer button, .code-tool-controls button { padding: 10px 20px; border: 1px solid var(--border-color); border-radius: 5px; background-color: transparent; color: var(--text-color); cursor: pointer; font-size: 16px; transition: all 0.3s; display: flex; align-items: center; gap: 8px; }
         .code-tool-footer button:hover, .code-tool-controls button:hover { background-color: var(--primary-color); color: white; border-color: var(--primary-color); }
         .code-tool-controls select { padding: 10px; border-radius: 5px; border: 1px solid var(--border-color); background-color: var(--bg-color); color: var(--text-color); }
@@ -175,6 +175,10 @@
             background-color: var(--primary-color);
             color: white;
             border-color: var(--primary-color);
+        }
+        .data-buttons {
+            display: flex;
+            gap: 10px;
         }
 
         /* Styles for new Bookmark Form Modal */
@@ -308,6 +312,7 @@
                             <option value="htmlmixed">HTML</option>
                             <option value="css">CSS</option>
                             <option value="javascript">JavaScript</option>
+                            <option value="php">PHP</option>
                         </select>
                     </div>
                 </div>
@@ -330,6 +335,7 @@
                 <div class="code-tool-footer">
                     <button id="beautify-btn"><i class='bx bxs-magic-wand'></i> Beautify</button>
                     <button id="minify-btn"><i class='bx bx-unite'></i> Minify</button>
+                    <button id="remove-comments-btn"><i class='bx bx-comment-x'></i> Remove Comments</button>
                     <button id="copy-btn"><i class='bx bx-copy'></i> Copy Result</button>
                     <button id="clear-btn"><i class='bx bx-trash'></i> Clear</button>
                 </div>
@@ -354,6 +360,7 @@
                         <div id="gradient-settings" class="form-group" style="display: none;"><label>Gradient Colors</label><div class="color-inputs"><input type="color" id="gradient-color-1" value="#8EC5FC"><input type="color" id="gradient-color-2" value="#E0C3FC"></div></div>
                         <div id="image-settings" class="form-group" style="display: none;"><label for="bg-image-url">Background Image URL</label><input type="url" id="bg-image-url" placeholder="https://example.com/image.jpg"></div>
                         <button id="apply-background-btn" class="settings-btn">Apply Background</button>
+                        <button id="reset-background-btn" class="settings-btn">Reset Design</button>
                     </div>
                     <div id="pane-bookmarks" class="settings-pane  active">
                         <h4>Manage Bookmarks</h4>
@@ -363,8 +370,18 @@
                     </div>
                     <div id="pane-data" class="settings-pane">
                         <h4>Import & Export</h4>
-                        <div class="form-group"><button id="export-settings-btn" class="settings-btn">Export Settings</button><p style="font-size: 12px; opacity: 0.8;">Save your settings to a JSON file.</p></div>
-                        <div class="form-group"><label for="import-settings-input" class="settings-btn">Import Settings</label><input type="file" id="import-settings-input" accept=".json" style="display: none;"><p style="font-size: 12px; opacity: 0.8;">Load settings from a JSON file.</p></div>
+                         <div class="form-group data-buttons">
+                            <button id="export-settings-btn" class="settings-btn">Export Settings</button>
+                            <label for="import-settings-input" class="settings-btn">Import Settings</label>
+                            <input type="file" id="import-settings-input" accept=".json" style="display: none;">
+                        </div>
+                        <p style="font-size: 12px; opacity: 0.8;">Save or load your settings to/from a JSON file.</p>
+                        
+                        <h4>Reset</h4>
+                        <div class="form-group">
+                            <button id="reset-all-btn" class="settings-btn">Reset All Settings</button>
+                            <p style="font-size: 12px; opacity: 0.8;">This will restore all bookmarks and settings to their original defaults. This action cannot be undone.</p>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -407,6 +424,8 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.15/mode/javascript/javascript.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.15/mode/css/css.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.15/mode/htmlmixed/htmlmixed.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.15/mode/php/php.min.js"></script>
+
 
     <script>
     document.addEventListener("DOMContentLoaded", function () {
@@ -612,37 +631,119 @@
         });
 
         // --- CODE TOOL LOGIC ---
-        const commonConfig = { lineNumbers: true, theme: "monokai", lineWrapping: true, indentUnit: 2, tabSize: 2 };
+        const commonConfig = { lineNumbers: true, theme: "monokai", lineWrapping: true, indentUnit: 4, tabSize: 4, };
         const inputEditor = CodeMirror.fromTextArea(document.getElementById('code-input-textarea'), { ...commonConfig, mode: 'htmlmixed' });
         const outputEditor = CodeMirror.fromTextArea(document.getElementById('code-output-textarea'), { ...commonConfig, mode: 'htmlmixed', readOnly: true });
         const langSelect = document.getElementById('code-language-select');
         const optionsContainer = document.querySelector('.code-tool-options');
         
+        const inputStats = document.getElementById('input-stats');
+        const outputStats = document.getElementById('output-stats');
+
+        function updateEditorStats(editor, statsEl) {
+            const value = editor.getValue();
+            const charCount = value.length;
+            const lineCount = editor.lineCount();
+            statsEl.textContent = `Chars: ${charCount} | Lines: ${lineCount}`;
+        }
+
+        inputEditor.on('change', (cm) => {
+            updateEditorStats(cm, inputStats);
+        });
+        
+        outputEditor.on('change', (cm) => {
+            updateEditorStats(cm, outputStats);
+        });
+
         langSelect.addEventListener('change', () => {
             const lang = langSelect.value;
-            inputEditor.setOption('mode', lang);
-            outputEditor.setOption('mode', lang);
+            // Handle PHP mode specifically as it's complex
+            const mode = lang === 'php' ? { name: "php", startOpen: true } : lang;
+            inputEditor.setOption('mode', mode);
+            outputEditor.setOption('mode', mode);
             optionsContainer.style.display = lang === 'css' ? 'flex' : 'none';
         });
+
+        // Basic PHP beautifier (indentation only)
+        function beautify_php(code) {
+            let indentLevel = 0;
+            const indent_size = 4;
+            const indent_char = ' '.repeat(indent_size);
+            let beautifiedCode = '';
+            const lines = code.split('\n');
+
+            for (let line of lines) {
+                line = line.trim();
+                if (line.length === 0) continue;
+
+                if (line.endsWith('}') || line.endsWith('};')) {
+                    indentLevel = Math.max(0, indentLevel - 1);
+                }
+                
+                beautifiedCode += indent_char.repeat(indentLevel) + line + '\n';
+                
+                if (line.endsWith('{')) {
+                    indentLevel++;
+                }
+            }
+            return beautifiedCode;
+        }
 
         document.getElementById('beautify-btn').addEventListener('click', () => {
             const code = inputEditor.getValue();
             if (!code) return;
-            const options = { indent_size: 2, space_in_empty_paren: true };
+            const options = { indent_size: 4, space_in_empty_paren: true };
             let beautifiedCode = '';
             try {
-                if (langSelect.value === 'javascript') beautifiedCode = js_beautify(code, options);
-                else if (langSelect.value === 'css') beautifiedCode = css_beautify(code, options);
+                const lang = langSelect.value;
+                if (lang === 'javascript') beautifiedCode = js_beautify(code, options);
+                else if (lang === 'css') beautifiedCode = css_beautify(code, options);
+                else if (lang === 'php') beautifiedCode = beautify_php(code);
                 else beautifiedCode = html_beautify(code, options);
                 outputEditor.setValue(beautifiedCode);
             } catch (e) { outputEditor.setValue("Error: " + e.message); }
         });
+        
+        // Function to remove comments based on language
+        function removeComments(code, lang) {
+            let result = code;
+            // Regex for block comments: /* ... */
+            const blockCommentRegex = /\/\*[\s\S]*?\*\//g;
+            // Regex for single-line comments, avoiding URLs: //... or #...
+            const singleLineCommentRegex = /(?<!:)\/\/[^\r\n]*|#[^\r\n]*/g;
+             // Regex for HTML comments: <!-- ... -->
+            const htmlCommentRegex = /<!--[\s\S]*?-->/g;
+
+            switch(lang) {
+                case 'css':
+                    result = result.replace(blockCommentRegex, '').replace(singleLineCommentRegex, '');
+                    break;
+                case 'javascript':
+                    result = result.replace(blockCommentRegex, '').replace(singleLineCommentRegex, '');
+                    break;
+                case 'htmlmixed':
+                case 'php':
+                    result = result.replace(htmlCommentRegex, '');
+                    result = result.replace(blockCommentRegex, '');
+                    result = result.replace(singleLineCommentRegex, '');
+                    break;
+            }
+            return result;
+        }
 
         document.getElementById('minify-btn').addEventListener('click', () => {
             let code = inputEditor.getValue();
             if (!code) return;
-            let minifiedCode = code.replace(/\/\*[\s\S]*?\*\/|(?<!:)\/\/[^\r\n]*/g, '').replace(/\s+/g, ' ');
+            // First remove comments, then minify whitespace
+            let minifiedCode = removeComments(code, langSelect.value);
+            minifiedCode = minifiedCode.replace(/\s+/g, ' ').trim();
             outputEditor.setValue(minifiedCode);
+        });
+        
+        document.getElementById('remove-comments-btn').addEventListener('click', () => {
+            const code = inputEditor.getValue();
+            if (!code) return;
+            outputEditor.setValue(removeComments(code, langSelect.value));
         });
 
         document.getElementById('copy-btn').addEventListener('click', () => {
@@ -722,6 +823,22 @@
             saveSettings();
             applyBackground();
         });
+
+        document.getElementById('reset-background-btn').addEventListener('click', () => {
+            userSettings.background = { type: 'default', value: '' };
+            saveSettings();
+            applyBackground();
+            populateSettingsForm();
+        });
+
+        document.getElementById('reset-all-btn').addEventListener('click', () => {
+            if (confirm("Are you sure you want to reset all settings and bookmarks to their default state? This cannot be undone.")) {
+                localStorage.removeItem('lcaHomepageSettings');
+                loadSettings();
+                populateSettingsForm();
+            }
+        });
+
 
         // --- IMPROVED BOOKMARK MANAGEMENT ---
         const bookmarkEditorList = document.getElementById('bookmark-editor-list');
