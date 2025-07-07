@@ -342,19 +342,19 @@
             <div class="settings-container">
                 <h3>Settings</h3>
                 <div class="settings-tabs">
-                    <div class="settings-tab active" data-pane="appearance">Appearance</div>
-                    <div class="settings-tab" data-pane="bookmarks">Bookmarks</div>
+                    <div class="settings-tab active" data-pane="bookmarks">Bookmarks</div>
+                    <div class="settings-tab" data-pane="appearance">Appearance</div>
                     <div class="settings-tab" data-pane="data">Data</div>
                 </div>
                 <div class="settings-content">
-                    <div id="pane-appearance" class="settings-pane active">
+                    <div id="pane-appearance" class="settings-pane">
                         <h4>Background Style</h4>
                         <div class="form-group"><label><input type="radio" name="bg-type" value="default" checked> Default Grid</label><label><input type="radio" name="bg-type" value="gradient"> Gradient</label><label><input type="radio" name="bg-type" value="image"> Image</label></div>
                         <div id="gradient-settings" class="form-group" style="display: none;"><label>Gradient Colors</label><div class="color-inputs"><input type="color" id="gradient-color-1" value="#8EC5FC"><input type="color" id="gradient-color-2" value="#E0C3FC"></div></div>
                         <div id="image-settings" class="form-group" style="display: none;"><label for="bg-image-url">Background Image URL</label><input type="url" id="bg-image-url" placeholder="https://example.com/image.jpg"></div>
                         <button id="apply-background-btn" class="settings-btn">Apply Background</button>
                     </div>
-                    <div id="pane-bookmarks" class="settings-pane">
+                    <div id="pane-bookmarks" class="settings-pane  active">
                         <h4>Manage Bookmarks</h4>
                         <p>Drag and drop to reorder.</p>
                         <ul id="bookmark-editor-list"></ul>
