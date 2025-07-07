@@ -146,6 +146,7 @@
             color: var(--text-color);
             box-sizing: border-box;
         }
+        .form-group input[type="color"] { width:50px; padding:0 }
         .form-group .color-inputs { display: flex; gap: 10px; align-items: center; }
         .form-group .image-note { font-size: 12px; opacity: 0.7; margin-top: 5px; }
 
@@ -713,7 +714,7 @@
             const type = document.querySelector('input[name="bg-type"]:checked').value;
             let value = '';
             if (type === 'gradient') {
-                value = `linear-gradient(135deg, ${document.getElementById('gradient-color-1').value}, ${document.getElementById('gradient-color-2').value})`;
+                value = `linear-gradient(90deg, ${document.getElementById('gradient-color-1').value}, ${document.getElementById('gradient-color-2').value})`;
             } else if (type === 'image') {
                 value = document.getElementById('bg-image-url').value;
             }
